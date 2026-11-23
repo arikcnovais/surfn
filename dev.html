@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <!-- DEV ENTRY — this one loads js/main.js over http.
+     python3 tools/build_single.py regenerates the self-contained index.html -->
+  <title>SURFN 2000 — surfe, zoeira e internet discada</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="stage">
+    <canvas id="game" width="640" height="360"></canvas>
+  </div>
+  <div id="touch" aria-hidden="true">
+    <div id="stick" aria-label="Mover"><div id="knob"></div></div>
+    <div class="tpad">
+      <button data-key="KeyE" aria-label="Interagir">E</button>
+      <button data-key="Space" aria-label="Pular">PULO</button>
+      <button data-key="ShiftLeft" aria-label="Turbo">TURBO</button>
+      <button data-key="KeyJ" aria-label="Grab">J</button>
+      <button data-key="KeyK" aria-label="Spin">K</button>
+      <button data-key="KeyL" aria-label="Flip">L</button>
+      <button data-key="Escape" aria-label="Pausar">ESC</button>
+    </div>
+  </div>
+  <div id="boot">
+    <div class="boot-inner">
+      <div class="title">SURFN 2000</div>
+      <div class="sub">discando para a lan house…</div>
+      <div class="bar"><i></i></div>
+      <div class="tiny">se demorar, é o modem. nunca é a gente.</div>
+    </div>
+  </div>
+  <div id="scan"></div>
+  <noscript>Esse campeonato precisa de JavaScript. Igual o Orkut precisava de paciência.</noscript>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

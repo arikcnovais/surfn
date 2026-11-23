@@ -1,0 +1,226 @@
+/* SURFN 2000 — ocean-tinted page chrome around the 640x360 pixel stage. */
+
+/* Comic Relief (SIL OFL 1.1, assets/fonts/OFL.txt) — the UI face. The files
+   sit next to the game so dev.html and file:// both work; the single-file
+   build inlines them as data URIs (tools/build_single.py). */
+@font-face {
+  font-family: "Comic Relief";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/comic-relief-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Comic Relief";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../assets/fonts/comic-relief-700.woff2") format("woff2");
+}
+
+:root {
+  --deep: #071221;
+  --ocean: #0b2a44;
+  --foam: #8fd3e8;
+  --gold: #ffe066;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 0%, #2b6f9e 0%, #0b2338 46%, #071221 100%);
+  font-family: "Comic Relief", "Comic Sans MS", "Comic Sans", "Comic Neue",
+    "Trebuchet MS", "DejaVu Sans", Verdana, "Segoe UI", Tahoma, sans-serif;
+  color: #fbeec8;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.028) 0 1px, transparent 1px 3px),
+    radial-gradient(ellipse at 50% 120%, rgba(143,211,232,0.16), transparent 60%);
+  z-index: 3;
+}
+
+#stage {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: transparent;
+}
+
+canvas#game {
+  display: block;
+  background: transparent;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+/* Touch controls: shown only on coarse-pointer devices. */
+#touch { display: none; }
+.touch.show-touch #touch { display: block; }
+#touch {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 8;
+  user-select: none;
+  -webkit-user-select: none;
+}
+#stick {
+  position: absolute;
+  left: max(18px, env(safe-area-inset-left));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  width: 124px;
+  height: 124px;
+  border: 2px solid rgba(143, 211, 232, 0.55);
+  border-radius: 50%;
+  background: rgba(7, 18, 33, 0.56);
+  box-shadow: inset 0 0 22px rgba(143, 211, 232, 0.12);
+  pointer-events: auto;
+  touch-action: none;
+}
+#knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 48px;
+  height: 48px;
+  border: 2px solid rgba(255, 224, 102, 0.8);
+  border-radius: 50%;
+  background: rgba(255, 224, 102, 0.2);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.tpad {
+  position: absolute;
+  right: max(14px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: repeat(3, 50px);
+  gap: 7px;
+  pointer-events: none;
+}
+.tpad button {
+  pointer-events: auto;
+  width: 50px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid rgba(143, 211, 232, 0.6);
+  border-radius: 7px;
+  background: rgba(8, 20, 38, 0.7);
+  color: #fbeec8;
+  font: bold 11px "Comic Relief", "Comic Sans MS", "Comic Sans", "Trebuchet MS", "DejaVu Sans", Verdana, sans-serif;
+  letter-spacing: 0.5px;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.tpad button.pressed {
+  background: rgba(255, 224, 102, 0.3);
+  border-color: #ffe066;
+  color: #fffbe8;
+}
+
+@media (max-height: 520px) {
+  #stick { width: 96px; height: 96px; }
+  #knob { width: 38px; height: 38px; }
+  .tpad { grid-template-columns: repeat(4, 44px); }
+  .tpad button { width: 44px; height: 34px; font-size: 9px; }
+}
+
+/* background scanline sheet, subtle, under the canvas letterbox */
+#scan {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(143,211,232,0.05), transparent 30%);
+  z-index: 0;
+}
+
+#boot {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(ellipse at 50% 40%, #163b5a 0%, #081727 65%, #050d17 100%);
+  z-index: 10;
+  transition: opacity 0.6s ease;
+}
+
+#boot.hidden { opacity: 0; pointer-events: none; }
+
+.boot-inner {
+  width: 360px;
+  padding: 26px 22px;
+  border: 2px solid #8fd3e8;
+  box-shadow: 0 0 0 4px #0b1d31, 0 0 28px rgba(143,211,232,0.25);
+  background: linear-gradient(180deg, #122b45, #0a1a2c);
+  text-align: center;
+}
+
+.boot-inner .title {
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  color: #ffe066;
+  text-shadow: 2px 2px 0 #5a2a1c;
+}
+
+.boot-inner .sub {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #8fd3e8;
+}
+
+.boot-inner .tiny {
+  margin-top: 12px;
+  font-size: 9px;
+  color: #9aa2b3;
+}
+
+.boot-inner .bar {
+  height: 8px;
+  margin: 16px 0 4px;
+  background: #071523;
+  border: 1px solid #35519c;
+  overflow: hidden;
+}
+
+.boot-inner .bar i {
+  display: block;
+  height: 100%;
+  width: 30%;
+  background: linear-gradient(90deg, #5aa6cd, #ffe066);
+  animation: load 1.4s ease-in-out infinite;
+}
+
+@keyframes load {
+  0% { transform: translateX(-110%); }
+  55% { transform: translateX(120%); }
+  100% { transform: translateX(360%); }
+}
+
+noscript {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  color: #ffe066;
+  z-index: 20;
+  text-align: center;
+  padding: 24px;
+}

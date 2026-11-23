@@ -1,0 +1,485 @@
+{
+  "music": [
+    {
+      "id": "glorious-morning",
+      "file": "music/glorious-morning.mp3",
+      "title": "Glorious Morning",
+      "artist": "Waterflame",
+      "year": "2007",
+      "license": "CC BY-NC-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/3.0/",
+      "source": "https://www.newgrounds.com/audio/listen/91476"
+    },
+    {
+      "id": "jumper",
+      "file": "music/jumper-newgrounds.mp3",
+      "title": "Jumper",
+      "artist": "Waterflame",
+      "year": "2008",
+      "license": "CC BY-NC-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/3.0/",
+      "source": "https://www.newgrounds.com/audio/listen/168734"
+    },
+    {
+      "id": "rose-at-midnight",
+      "file": "music/rose-at-midnight.mp3",
+      "title": "Rose at Midnight (BLACK ROSE Ver.)",
+      "artist": "NemesisTheory",
+      "year": "2023 (original 2008)",
+      "license": "CC BY 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+      "source": "https://www.newgrounds.com/audio/listen/1268622"
+    },
+    {
+      "id": "electronaut",
+      "file": "music/electronaut.ogg",
+      "title": "Electronaut",
+      "artist": "Aerologic",
+      "year": "2001-2013",
+      "license": "CC BY-NC 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc/3.0/",
+      "source": "https://archive.org/details/toulp6"
+    },
+    {
+      "id": "rose-at-nightfall",
+      "file": "music/rose-at-nightfall-black-rose.mp3",
+      "title": "Rose at Nightfall (BLACK ROSE Ver.)",
+      "artist": "Legendary x NemesisTheory",
+      "year": "2025",
+      "license": "CC BY 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+      "source": "https://www.newgrounds.com/audio/listen/1444286"
+    },
+    {
+      "id": "rose-at-twilight",
+      "file": "music/rose-at-twilight-black-rose.mp3",
+      "title": "Rose at Twilight (BLACK ROSE Ver.)",
+      "artist": "Legendary x NemesisTheory",
+      "year": "2026",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "source": "https://www.newgrounds.com/audio/listen/1508320"
+    },
+    {
+      "id": "ricochet-love",
+      "file": "music/ricochet-love.mp3",
+      "title": "Ricochet Love",
+      "artist": "Waterflame",
+      "year": "2009",
+      "license": "CC BY-NC-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/3.0/",
+      "source": "https://www.newgrounds.com/audio/listen/233860"
+    },
+    {
+      "id": "chaotic",
+      "file": "music/chaotic.mp3",
+      "title": "Chaotic",
+      "artist": "Waterflame",
+      "year": "2010",
+      "license": "CC BY-NC-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/3.0/",
+      "source": "https://www.newgrounds.com/audio/listen/316681"
+    },
+    {
+      "id": "glorious-morning-2",
+      "file": "music/glorious-morning-2.mp3",
+      "title": "Glorious Morning 2",
+      "artist": "Waterflame",
+      "year": "2013",
+      "license": "CC BY-NC-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/3.0/",
+      "source": "https://www.newgrounds.com/audio/listen/554504"
+    },
+    {
+      "id": "electroman-adventures",
+      "file": "music/electroman-adventures.mp3",
+      "title": "Electroman Adventures",
+      "artist": "Waterflame",
+      "year": "2012",
+      "license": "CC BY-NC-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/3.0/",
+      "source": "https://www.newgrounds.com/audio/listen/479319"
+    },
+    {
+      "id": "space-pirates",
+      "file": "music/space_pirates.mp3",
+      "title": "Space Pirates",
+      "artist": "Waterflame",
+      "year": "2006",
+      "license": "CC BY-NC-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/3.0/",
+      "source": "https://www.newgrounds.com/audio/listen/57239"
+    },
+    {
+      "id": "techock",
+      "file": "music/techock.mp3",
+      "title": "Techock",
+      "artist": "Waterflame",
+      "year": "2005",
+      "license": "CC BY-NC-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/3.0/",
+      "source": "https://www.newgrounds.com/audio/listen/36355"
+    },
+    {
+      "id": "the-show",
+      "file": "music/the_show.mp3",
+      "title": "The Show",
+      "artist": "Waterflame",
+      "year": "2008",
+      "license": "CC BY-NC-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/3.0/",
+      "source": "https://www.newgrounds.com/audio/listen/169148"
+    },
+    {
+      "id": "swampland",
+      "file": "music/swamplands.mp3",
+      "title": "Swampland",
+      "artist": "Waterflame",
+      "year": "2008",
+      "license": "CC BY-NC-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/3.0/",
+      "source": "https://www.newgrounds.com/audio/listen/168396"
+    }
+  ],
+  "themes": {
+    "hearth": [
+      "electronaut",
+      "swampland",
+      "the-show"
+    ],
+    "morning": [
+      "glorious-morning",
+      "glorious-morning-2",
+      "electroman-adventures"
+    ],
+    "dusk": [
+      "space-pirates",
+      "the-show",
+      "electronaut"
+    ],
+    "night": [
+      "rose-at-midnight",
+      "rose-at-nightfall",
+      "rose-at-twilight"
+    ],
+    "rain": [
+      "swampland",
+      "rose-at-midnight",
+      "space-pirates"
+    ],
+    "cabin": [
+      "electronaut",
+      "the-show",
+      "swampland"
+    ],
+    "starfall": [
+      "rose-at-twilight",
+      "electronaut",
+      "rose-at-nightfall"
+    ],
+    "sunset": [
+      "space-pirates",
+      "the-show",
+      "swampland"
+    ],
+    "omen": [
+      "rose-at-nightfall"
+    ],
+    "finale": [
+      "rose-at-twilight"
+    ],
+    "winter2000": [
+      "glorious-morning",
+      "the-show",
+      "swampland"
+    ],
+    "thanksgiving2000": [
+      "the-show",
+      "swampland",
+      "electronaut"
+    ],
+    "junina2000": [
+      "glorious-morning-2",
+      "glorious-morning",
+      "electroman-adventures"
+    ],
+    "christmas2000": [
+      "the-show",
+      "glorious-morning",
+      "swampland"
+    ],
+    "menu2000": [
+      "glorious-morning",
+      "ricochet-love",
+      "glorious-morning-2",
+      "electroman-adventures"
+    ],
+    "surf": [
+      "jumper",
+      "electroman-adventures",
+      "glorious-morning-2"
+    ],
+    "flight": [
+      "ricochet-love",
+      "glorious-morning-2",
+      "electroman-adventures"
+    ],
+    "festival": [
+      "glorious-morning-2",
+      "glorious-morning",
+      "electroman-adventures"
+    ],
+    "victory": [
+      "glorious-morning",
+      "glorious-morning-2",
+      "ricochet-love"
+    ],
+    "newyear2000": [
+      "glorious-morning-2",
+      "electroman-adventures",
+      "ricochet-love"
+    ],
+    "easter2000": [
+      "glorious-morning",
+      "electroman-adventures",
+      "the-show"
+    ],
+    "carnival2000": [
+      "chaotic",
+      "ricochet-love",
+      "glorious-morning-2"
+    ],
+    "surfrock": [
+      "jumper",
+      "space-pirates",
+      "electroman-adventures"
+    ],
+    "radical": [
+      "chaotic",
+      "ricochet-love",
+      "jumper"
+    ],
+    "garage2000": [
+      "techock",
+      "chaotic",
+      "the-show"
+    ],
+    "rocknight": [
+      "chaotic",
+      "rose-at-nightfall",
+      "techock"
+    ],
+    "rain2000": [
+      "swampland",
+      "space-pirates",
+      "techock"
+    ],
+    "rift": [
+      "rose-at-midnight",
+      "rose-at-nightfall",
+      "rose-at-twilight"
+    ],
+    "storm": [
+      "rose-at-twilight",
+      "rose-at-nightfall",
+      "rose-at-midnight"
+    ],
+    "glitch": [
+      "chaotic",
+      "rose-at-midnight",
+      "ricochet-love"
+    ],
+    "boss": [
+      "rose-at-twilight",
+      "rose-at-nightfall",
+      "rose-at-midnight"
+    ],
+    "halloween2000": [
+      "rose-at-nightfall",
+      "rose-at-midnight",
+      "swampland"
+    ]
+  },
+  "sfx": {
+    "click": "sfx/click.mp3",
+    "digital-beep": "sfx/digital-beep.mp3",
+    "wrong": "sfx/wrong.mp3",
+    "telegram": "sfx/telegram.mp3",
+    "camera": "sfx/camera.mp3",
+    "slide-whistle": "sfx/slide-whistle.mp3",
+    "boink": "sfx/boink.mp3",
+    "boing": "sfx/boing.mp3",
+    "splash": "sfx/splash.mp3",
+    "big-splash": "sfx/big-splash.mp3",
+    "wave": "sfx/wave.mp3",
+    "tada": "sfx/tada.mp3",
+    "space-gun": "sfx/space-gun.mp3",
+    "laser": "sfx/laser.mp3",
+    "wind-chime": "sfx/wind-chime.mp3",
+    "type-return": "sfx/type-return.mp3",
+    "phone": "sfx/phone.mp3",
+    "ding": "sfx/ding.mp3",
+    "pop": "sfx/pop.mp3",
+    "buzzer": "sfx/buzzer.mp3",
+    "chime": "sfx/chime.mp3",
+    "whoosh": "sfx/whoosh.mp3",
+    "coin": "sfx/coin.mp3",
+    "dialup": "sfx/dialup.ogg",
+    "kenney-click": "sfx/kenney-click.mp3",
+    "kenney-confirm": "sfx/kenney-confirm.mp3",
+    "kenney-error": "sfx/kenney-error.mp3",
+    "kenney-open": "sfx/kenney-open.mp3"
+  },
+  "events": {
+    "blip": [
+      {
+        "sample": "kenney-click",
+        "gain": 0.16
+      }
+    ],
+    "ui": [
+      {
+        "sample": "kenney-click",
+        "gain": 0.3
+      }
+    ],
+    "select": [
+      {
+        "sample": "kenney-confirm",
+        "gain": 0.24
+      }
+    ],
+    "deny": [
+      {
+        "sample": "kenney-error",
+        "gain": 0.3
+      }
+    ],
+    "quest": [
+      {
+        "sample": "kenney-confirm",
+        "gain": 0.3
+      }
+    ],
+    "pickup": [
+      {
+        "sample": "coin",
+        "gain": 0.26
+      }
+    ],
+    "trick": [
+      {
+        "sample": "camera",
+        "gain": 0.24
+      }
+    ],
+    "bail": [
+      {
+        "sample": "slide-whistle",
+        "gain": 0.2
+      },
+      {
+        "sample": "big-splash",
+        "gain": 0.26,
+        "delay": 0.28
+      }
+    ],
+    "gate": [
+      {
+        "sample": "ding",
+        "gain": 0.2
+      }
+    ],
+    "achievement": [
+      {
+        "sample": "tada",
+        "gain": 0.16
+      },
+      {
+        "sample": "chime",
+        "gain": 0.2,
+        "delay": 0.18
+      }
+    ],
+    "wave": [
+      {
+        "sample": "wave",
+        "gain": 0.18
+      }
+    ],
+    "unlock": [
+      {
+        "sample": "kenney-confirm",
+        "gain": 0.3
+      },
+      {
+        "sample": "chime",
+        "gain": 0.18,
+        "delay": 0.1
+      }
+    ],
+    "tape": [
+      {
+        "sample": "type-return",
+        "gain": 0.26
+      },
+      {
+        "sample": "dialup",
+        "gain": 0.08,
+        "offset": 0.1,
+        "duration": 1.2
+      }
+    ],
+    "reel": [
+      {
+        "sample": "camera",
+        "gain": 0.2
+      }
+    ],
+    "jump": [
+      {
+        "sample": "boink",
+        "gain": 0.22
+      }
+    ],
+    "festival": [
+      {
+        "sample": "wind-chime",
+        "gain": 0.26
+      }
+    ],
+    "splash": [
+      {
+        "sample": "splash",
+        "gain": 0.24
+      }
+    ],
+    "snow": [
+      {
+        "sample": "wind-chime",
+        "gain": 0.22
+      }
+    ],
+    "milestone": [
+      {
+        "sample": "tada",
+        "gain": 0.18
+      },
+      {
+        "sample": "chime",
+        "gain": 0.18,
+        "delay": 0.42
+      }
+    ],
+    "boost": [
+      {
+        "sample": "laser",
+        "gain": 0.18
+      },
+      {
+        "sample": "whoosh",
+        "gain": 0.16
+      }
+    ]
+  }
+}
