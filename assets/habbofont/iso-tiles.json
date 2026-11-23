@@ -1,0 +1,95 @@
+{
+  "image": "iso-tiles.png",
+  "tile": [
+    48,
+    24
+  ],
+  "frames": {
+    "wood": [
+      0,
+      0,
+      96,
+      48
+    ],
+    "grass": [
+      96,
+      0,
+      96,
+      48
+    ],
+    "stone": [
+      192,
+      0,
+      96,
+      48
+    ],
+    "cork": [
+      288,
+      0,
+      96,
+      48
+    ],
+    "classic": [
+      384,
+      0,
+      96,
+      48
+    ],
+    "pool": [
+      480,
+      0,
+      96,
+      48
+    ],
+    "metal": [
+      576,
+      0,
+      96,
+      48
+    ],
+    "bathroom": [
+      672,
+      0,
+      96,
+      48
+    ],
+    "ice": [
+      768,
+      0,
+      96,
+      48
+    ],
+    "goth": [
+      864,
+      0,
+      96,
+      48
+    ],
+    "floral": [
+      960,
+      0,
+      96,
+      48
+    ],
+    "abstract": [
+      1056,
+      0,
+      96,
+      48
+    ]
+  },
+  "sources": {
+    "wood": "tiles/bg_wood.gif",
+    "grass": "tiles/grass.gif",
+    "stone": "tiles/stone.gif",
+    "cork": "tiles/ACMA_Cork_bg.gif",
+    "classic": "tiles/classic-tile.gif",
+    "pool": "tiles/100x100_tile3_2.gif",
+    "metal": "tiles/metal2.gif",
+    "bathroom": "tiles/bg_bathroom_tile.gif",
+    "ice": "tiles/wallpaper_tileBurst.png",
+    "goth": "tiles/goth_pattern.gif",
+    "floral": "tiles/bg_pattern_floral_02.gif",
+    "abstract": "tiles/bg_pattern_abstract2.gif"
+  }
+}

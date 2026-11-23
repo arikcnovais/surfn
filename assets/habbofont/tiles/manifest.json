@@ -1,0 +1,186 @@
+{
+  "source": "habbofont.org (Backgrounds & Tiles)",
+  "count": 20,
+  "tiles": [
+    {
+      "file": "classic-tile.gif",
+      "source": "https://habbofont.org/assets/graphics/classic-tile.gif",
+      "width": 100,
+      "height": 100,
+      "format": "GIF",
+      "frames": 1,
+      "sha256": "1bb8dd697e5ef3aab004488d99e2a1ee4c13ebd4d0f796ba8f1960d412052e23"
+    },
+    {
+      "file": "100x100_tile3_2.gif",
+      "source": "https://images.habbo.com/c_images/backgrounds2/100x100_tile3_2.gif",
+      "width": 100,
+      "height": 100,
+      "format": "GIF",
+      "frames": 1,
+      "sha256": "5fcc6811fb85edc82e09294bb572969563049fc0a3bfb7fbba516d9ac22fe94d"
+    },
+    {
+      "file": "wallpaper_tileBurst.png",
+      "source": "https://images.habbo.com/c_images/backgrounds2/wallpaper_tileBurst.png",
+      "width": 300,
+      "height": 300,
+      "format": "PNG",
+      "frames": 1,
+      "sha256": "6cb3981fc77089d500d7dc675274755ffda59a5ef6e6f838ac7b0be87e2e3733"
+    },
+    {
+      "file": "bg_bathroom_tile.gif",
+      "source": "https://images.habbo.com/c_images/backgrounds/bg_bathroom_tile.gif",
+      "width": 260,
+      "height": 100,
+      "format": "GIF",
+      "frames": 1,
+      "sha256": "d9759b10bff92cbf00cf8605af98a3965d3e4ecd1be26636e72391c5d390d1d2"
+    },
+    {
+      "file": "ACMA_Cork_bg.gif",
+      "source": "https://images.habbo.com/c_images/backgrounds2/ACMA_Cork_bg.gif",
+      "width": 100,
+      "height": 100,
+      "format": "GIF",
+      "frames": 1,
+      "sha256": "6691589c5215964524b84d1171c091b314347e857f3775901e0717b0c46af95c"
+    },
+    {
+      "file": "bg_pattern_abstract1.gif",
+      "source": "https://images.habbo.com/c_images/backgrounds/bg_pattern_abstract1.gif",
+      "width": 40,
+      "height": 40,
+      "format": "GIF",
+      "frames": 1,
+      "sha256": "6bb2cd885cfa26adfb415f4ecfd60dc0cbffc1b297987002e0bc7d5bf05ea8be"
+    },
+    {
+      "file": "bg_pattern_abstract2.gif",
+      "source": "https://images.habbo.com/c_images/backgrounds/bg_pattern_abstract2.gif",
+      "width": 33,
+      "height": 33,
+      "format": "GIF",
+      "frames": 1,
+      "sha256": "381ef4961dcf992b63c2219f2f7e1ba3ebe54e7fc90a1decd804910443d5f99a"
+    },
+    {
+      "file": "bg_pattern_bulb.gif",
+      "source": "https://images.habbo.com/c_images/backgrounds/bg_pattern_bulb.gif",
+      "width": 40,
+      "height": 40,
+      "format": "GIF",
+      "frames": 1,
+      "sha256": "14a59e6cb7c9f3889a6d7bc3808aacb179c20845378a7a7500d1c7b82023e9c6"
+    },
+    {
+      "file": "bg_pattern_fish.gif",
+      "source": "https://images.habbo.com/c_images/backgrounds/bg_pattern_fish.gif",
+      "width": 80,
+      "height": 80,
+      "format": "GIF",
+      "frames": 1,
+      "sha256": "83eb6cda2b2f3398c71339d81a60e8cee89de719293a2b0684d564d2c17faafe"
+    },
+    {
+      "file": "bg_pattern_floral_01.gif",
+      "source": "https://images.habbo.com/c_images/backgrounds/bg_pattern_floral_01.gif",
+      "width": 80,
+      "height": 80,
+      "format": "GIF",
+      "frames": 1,
+      "sha256": "f2397abe59efa12d2239c07833b3ddb3ecdd8f84090bf566bcb7d274ae293560"
+    },
+    {
+      "file": "bg_pattern_floral_02.gif",
+      "source": "https://images.habbo.com/c_images/backgrounds/bg_pattern_floral_02.gif",
+      "width": 80,
+      "height": 80,
+      "format": "GIF",
+      "frames": 1,
+      "sha256": "73595e7726a597e7a0a5d975740946d522db148804fdd3f6e0c929303286968f"
+    },
+    {
+      "file": "bg_pattern_floral_03.gif",
+      "source": "https://images.habbo.com/c_images/backgrounds/bg_pattern_floral_03.gif",
+      "width": 80,
+      "height": 80,
+      "format": "GIF",
+      "frames": 1,
+      "sha256": "37320ef49de1848610a77e09ec789e152e4a763d861c34c714f1e6632512962a"
+    },
+    {
+      "file": "grass.gif",
+      "source": "https://images.habbo.com/c_images/backgrounds/grass.gif",
+      "width": 128,
+      "height": 128,
+      "format": "GIF",
+      "frames": 1,
+      "sha256": "ecc1273606126c824ff6a56c1e71470453d284e7377a73e605166cf6c97556d3"
+    },
+    {
+      "file": "stone.gif",
+      "source": "https://images.habbo.com/c_images/backgrounds/stone.gif",
+      "width": 256,
+      "height": 256,
+      "format": "GIF",
+      "frames": 1,
+      "sha256": "2509caad55a7ffec67dc1a495cd4bbf2577d012062403c863915a2eee2b7c5ab"
+    },
+    {
+      "file": "bg_wood.gif",
+      "source": "https://images.habbo.com/c_images/backgrounds/bg_wood.gif",
+      "width": 360,
+      "height": 360,
+      "format": "GIF",
+      "frames": 1,
+      "sha256": "5154dab0ad92ce98ab7a4fd74a44e249a057699d04d42c0c56a613ea0d138ae8"
+    },
+    {
+      "file": "metal2.gif",
+      "source": "https://images.habbo.com/c_images/backgrounds/metal2.gif",
+      "width": 126,
+      "height": 126,
+      "format": "GIF",
+      "frames": 1,
+      "sha256": "77aee390de0f4060d8188298321be992de2c44c2c73c7d9d2c14ecb95aaf63be"
+    },
+    {
+      "file": "bg_rain.gif",
+      "source": "https://images.habbo.com/c_images/backgrounds/bg_rain.gif",
+      "width": 100,
+      "height": 100,
+      "format": "GIF",
+      "frames": 10,
+      "sha256": "b3c1872a59f374c27f73aff6355772f29fcb45d4f7d6b31fd21a71909273e272"
+    },
+    {
+      "file": "goth_pattern.gif",
+      "source": "https://images.habbo.com/c_images/backgrounds/goth_pattern.gif",
+      "width": 80,
+      "height": 80,
+      "format": "GIF",
+      "frames": 1,
+      "sha256": "63bad7d0e3d15cdd742e7e400f1a6f2926ba1aab9a7ba319a20e851ace4f788e"
+    },
+    {
+      "file": "HC_pillow.gif",
+      "source": "https://images.habbo.com/c_images/backgrounds/HC_pillow.gif",
+      "width": 120,
+      "height": 120,
+      "format": "GIF",
+      "frames": 1,
+      "sha256": "8d81b559bcc1708810de77f9da67c98861d1c10a69f9c1be81d0967696b310df"
+    },
+    {
+      "file": "bubble.gif",
+      "source": "https://images.habbo.com/c_images/backgrounds/bubble.gif",
+      "width": 300,
+      "height": 300,
+      "format": "GIF",
+      "frames": 1,
+      "sha256": "0148a44a1a6a5f3efa87633b7d7287ca39ef416e0ead7b66c5639fb3152eaba5"
+    }
+  ]
+}

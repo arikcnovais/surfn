@@ -1,0 +1,76 @@
+{
+  "source": "habbofont.org official archive",
+  "count": 10,
+  "props": [
+    {
+      "file": "chair.png",
+      "source": "https://media.habbofont.org/official/blobs/sha256/96/96a777d8f65c15c135fb43e6e892723de2f8ea4b425ab020bac9ba8aad7c0c77.gif",
+      "width": 59,
+      "height": 82,
+      "sha256": "b4fa04843df382470f1dad8f828e198241692daf99873f7aad72e00240bdb8d8"
+    },
+    {
+      "file": "barrel.png",
+      "source": "https://media.habbofont.org/official/blobs/sha256/be/be34a121b885e30237dbce93e6297d9f523f012fbd94994d854612c8ef9b6bf1.png",
+      "width": 81,
+      "height": 93,
+      "sha256": "d637c6c51fc57a65aacffb0be8f95c4eb06f870eb83b94292517693ff433fc5e"
+    },
+    {
+      "file": "crate.png",
+      "source": "https://media.habbofont.org/official/blobs/sha256/40/40af3c18747999a42612b7620dfbcb65f3cccce2c9e9adeb77e1fb4b4be1799b.png",
+      "width": 114,
+      "height": 114,
+      "sha256": "59484b0163500550c5d830841e4adfffebe58269e8f14a65afe438eccaaabe68"
+    },
+    {
+      "file": "palm.png",
+      "source": "https://media.habbofont.org/official/blobs/sha256/6a/6a3437678610d1c6481e8d57d879c19e101caf45fb2db0da02b0555b543ec703.png",
+      "width": 88,
+      "height": 130,
+      "sha256": "378a7b296b9bb071b842956a04bb09225b058090decd1cdbb71764e5cf454160"
+    },
+    {
+      "file": "asian-tree.png",
+      "source": "https://media.habbofont.org/official/blobs/sha256/83/83f952d41e8c46ab47f6b80f700f5fd7d6aad05e1b6fea6ba71ccca454c4b60d.gif",
+      "width": 48,
+      "height": 131,
+      "sha256": "01e3dcaac46bb5bbb382de6f140ab031012f9ecc4ed11d670fa6a7bf6f4b523f"
+    },
+    {
+      "file": "pool-chair.png",
+      "source": "https://media.habbofont.org/official/blobs/sha256/ad/ad19f48d11ffe347af8d175a9b253dab9408c0d4bd02993ec97f8b0a25ddb3a0.gif",
+      "width": 76,
+      "height": 78,
+      "sha256": "e812eaf0da7462d99f51c76e2db5835732dcf11ad133f28be6743930332019a1"
+    },
+    {
+      "file": "hammock.png",
+      "source": "https://media.habbofont.org/official/blobs/sha256/29/299378e5d4dcaa69f891d0b1fd57a64f4635e7628d2a932ef85d614b228d3580.gif",
+      "width": 71,
+      "height": 159,
+      "sha256": "3cfba6f2bc68da991a9daa3a57b0fc22f48fa86801493f7697f5731319440a3f"
+    },
+    {
+      "file": "tiki-lamps.png",
+      "source": "https://habbofont.org/assets/graphics/habborator/files/lamp-group-6139d487e564.gif",
+      "width": 146,
+      "height": 171,
+      "sha256": "8165b9640577bcfcb94538fad5ad8b081143950ffa786584a87969c20aa4e25d"
+    },
+    {
+      "file": "hoop.png",
+      "source": "https://media.habbofont.org/official/blobs/sha256/65/650277331387f04ecfdbc7c0323bf7934cc06cd422eba8aa75a721fd76f9c173.gif",
+      "width": 40,
+      "height": 62,
+      "sha256": "f8c06aaa66dfc31afbec5dfa6510b42796cc9c674dae12fb1862aa0fd2ad4732"
+    },
+    {
+      "file": "grunge-barrel.png",
+      "source": "https://media.habbofont.org/official/blobs/sha256/b0/b036fd31829322da2fdb654e72e0c27e5fca1c3e68087bde6d69c30482b893b9.gif",
+      "width": 41,
+      "height": 63,
+      "sha256": "5c4331e84b93bab5ff5dec9bde61437975e8ed685a556974cd2f2448e114da7c"
+    }
+  ]
+}
