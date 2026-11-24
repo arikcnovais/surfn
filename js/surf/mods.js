@@ -38,6 +38,35 @@ export const BUILTIN_MODS = [
     id: 'pontosLoucos', title: 'PONTOS LOUCOS', desc: 'Tudo que você faz vale 2,5x. Placar de fliperama.',
     settings: { scoreFactor: 2.5 },
   },
+  // ---------------------------------------------------- temas caóticos 2000
+  {
+    id: 'caos2000', title: 'CAOS 2000', desc: 'Tubarões, IA nervosa e placar de fliperama. O servidor caiu.',
+    settings: { sharks: true, aiBonus: 2, scoreFactor: 1.8 },
+  },
+  {
+    id: 'inversao', title: 'INVERSÃO TOTAL', desc: 'A/D e W/S trocados. O teclado do PC 4 tá assim desde 2004.',
+    settings: { invertControls: true },
+  },
+  {
+    id: 'turboEterno', title: 'TURBO ETERNO', desc: 'O turbo nunca acaba. Só não bate na parede.',
+    settings: { turboEternal: true },
+  },
+  {
+    id: 'lanVazia', title: 'LAN VAZIA', desc: 'Sem rivais: só você, o mar e o modem discando.',
+    settings: { soloRun: true },
+  },
+  {
+    id: 'prorrogacao', title: 'PRORROGAÇÃO', desc: 'Cinco tempos em vez de três. O juiz não tem relógio.',
+    settings: { periods: 5 },
+  },
+  {
+    id: 'chuvaDePipa', title: 'CHUVA DE PIPA', desc: 'Pipas por toda a ilha, mesmo fora do festival.',
+    settings: { kiteStorm: true },
+  },
+  {
+    id: 'maratonaCaotica', title: 'MARATONA CAÓTICA', desc: 'Três vezes mais tempo, tubarões e pontos em dobro.',
+    settings: { durationFactor: 3, sharks: true, scoreFactor: 2 },
+  },
 ];
 
 const STORAGE_KEY = 'surfn-2000-mods-v1';
@@ -62,6 +91,12 @@ function sanitize(list) {
       sandboxWeather: typeof m.settings.sandboxWeather === 'string' ? m.settings.sandboxWeather : '',
       sandboxMin: Number(m.settings.sandboxMin) || 0,
       materialFactor: Math.max(1, Math.min(5, Number(m.settings.materialFactor) || 1)),
+      invertControls: !!m.settings.invertControls,
+      turboEternal: !!m.settings.turboEternal,
+      soloRun: !!m.settings.soloRun,
+      sharks: !!m.settings.sharks,
+      kiteStorm: !!m.settings.kiteStorm,
+      periods: Math.max(1, Math.min(5, Number(m.settings.periods) || 0)),
     } : {},
   }));
 }
@@ -96,7 +131,12 @@ export class Mods {
   }
 
   activeSettings() {
-    const out = { noHud: false, durationFactor: 1, goalFactor: 1, aiBonus: 0, scoreFactor: 1, sandboxWeather: '', sandboxMin: 0, materialFactor: 1 };
+    const out = {
+      noHud: false, durationFactor: 1, goalFactor: 1, aiBonus: 0, scoreFactor: 1,
+      sandboxWeather: '', sandboxMin: 0, materialFactor: 1,
+      invertControls: false, turboEternal: false, soloRun: false, sharks: false,
+      kiteStorm: false, periods: 3,
+    };
     for (const mod of this.all()) {
       if (!this.enabled.has(mod.id)) continue;
       const s = mod.settings || {};
@@ -108,7 +148,34 @@ export class Mods {
       if (s.sandboxWeather) out.sandboxWeather = s.sandboxWeather;
       if (s.sandboxMin) out.sandboxMin = s.sandboxMin;
       out.materialFactor = Math.max(out.materialFactor, s.materialFactor || 1);
+      if (s.invertControls) out.invertControls = true;
+      if (s.turboEternal) out.turboEternal = true;
+      if (s.soloRun) out.soloRun = true;
+      if (s.sharks) out.sharks = true;
+      if (s.kiteStorm) out.kiteStorm = true;
+      if (s.periods > 1) out.periods = s.periods;
     }
     return out;
   }
+}
+
+/* ------------------------------------------------------- community mods
+   Anyone can publish a pack from the console or a userscript:
+     SURFN_MODS.push({ id: 'meuMod', title: 'MEU MOD', desc: '...', settings: { scoreFactor: 2 } })
+   or install it for good with SURFN_MOD.add({...}), which writes the same
+   localStorage pack the Remix screen loads on boot.
+   A mod is plain JSON data (no code runs from a pack), and only the fields
+   sanitized above are read. */
+export function addCommunityMod(mod) {
+  const [clean] = sanitize([mod]);
+  if (!clean) return false;
+  let list = [];
+  try { list = sanitize(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')); } catch { list = []; }
+  const next = sanitize([...list.filter((m) => m.id !== clean.id), clean]);
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch { return false; }
+  return clean;
+}
+
+if (typeof globalThis !== 'undefined') {
+  globalThis.SURFN_MOD = { add: addCommunityMod, builtins: BUILTIN_MODS };
 }

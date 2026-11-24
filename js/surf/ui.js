@@ -98,6 +98,15 @@ export class UI {
     this.art.panel(ctx, x, y, w, h);
     ctx.globalAlpha = 1;
   }
+  /* Long translated copy used to run over the card border and into the next
+     card. fit() shortens it, but a clip is the guarantee: nothing draws
+     outside its own panel whatever the locale says. */
+  clipCard(ctx, x, y, w, h) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x + 4, y + 3, w - 8, h - 6);
+    ctx.clip();
+  }
   shade(ctx, a = 0.55) {
     ctx.fillStyle = `rgba(6,12,26,${a})`;
     // Cover the whole stage, not just the centred UI safe frame: on 4:3 and
@@ -305,19 +314,32 @@ export class UI {
     drawText(ctx, `${Math.round(p.score)}`, 34, 9, { size: 15, color: C.gold, shadow: C.ink });
     drawText(ctx, 'PONTOS', 35, 28, { size: 5, color: C.blue });
     const nextMile = (Math.floor(p.score / 1000) + 1) * 1000;
-    drawText(ctx, `MILESTONE ${nextMile}`, 35, 37, {
-      size: 4, color: p.score >= 1000 ? C.violet : C.dim,
-    });
+    if (run.periods > 1) {
+      const wins = run.periodWins.filter(Boolean).length;
+      drawText(ctx, `${run.period + 1}º TEMPO · \u2605${wins}`, 35, 37, {
+        size: 4, color: C.gold,
+      });
+    } else {
+      drawText(ctx, `MILESTONE ${nextMile}`, 35, 37, {
+        size: 4, color: p.score >= 1000 ? C.violet : C.dim,
+      });
+    }
     const goal = run.def.goal;
     const isPlace = goal.type === 'place';
     const goalNow = this.goalValue(game, run);
-    const goalMet = isPlace ? pos <= goal.value : goalNow >= goal.value;
-    drawText(ctx, free ? 'MISSÕES' : isPlace ? 'POSIÇÃO' : `${run.goalLabel}`, 196, 14, {
+    // in a match of periods the meter shows this period's slice of the goal,
+    // which is what the half-time scoreboard judges
+    const per = run.periods > 1 && !isPlace;
+    const perTarget = per ? (goal.per?.[run.period] ?? Math.ceil(goal.value / run.periods)) : 0;
+    const perNow = per ? Math.round(Math.max(0, goalNow - run.periodBase)) : 0;
+    const goalMet = isPlace ? pos <= goal.value : per ? perNow >= perTarget : goalNow >= goal.value;
+    drawText(ctx, free ? 'MISSÕES' : isPlace ? 'POSIÇÃO' : per ? 'PARCIAL' : `${run.goalLabel}`, 196, 14, {
       size: 5, color: free ? C.violet : goalMet ? C.green : C.blue, align: 'right',
     });
     drawText(ctx, fit(ctx, free ? `${mapQuestsDone}/${mapQuests.length}`
       : isPlace ? `${pos}º / ${goal.value}º`
-        : `${Math.round(Math.min(goalNow, goal.value))}/${goal.value}`, 100, 7),
+        : per ? `${perNow}/${perTarget}`
+          : `${Math.round(Math.min(goalNow, goal.value))}/${goal.value}`, 100, 7),
       196, 23, {
         size: 7, color: free ? C.violet : goalMet ? C.green : C.cream, align: 'right',
       });
@@ -422,6 +444,8 @@ export class UI {
       ctx.fillRect(VIEW.W / 2 - 26, 64, 52 * clamp(p.comboT / 5.5, 0, 1), 3);
     }
 
+    if (run.phase === 'break') this.drawHalfTime(ctx, game);
+
     this.drawMinimap(ctx, game);
     this.drawToasts(ctx);
     this.drawPopup(ctx);
@@ -436,6 +460,35 @@ export class UI {
     drawText(ctx, hint, VIEW.W / 2 + 58, VIEW.H - 17, {
       size: 4, color: free ? 'rgba(143,211,232,0.95)' : 'rgba(231,240,248,0.82)',
       align: 'center',
+    });
+  }
+
+  /* the whistle between periods: a full-screen card so the pause reads */
+  drawHalfTime(ctx, game) {
+    const run = game.run;
+    if (!run) return;
+    const bw = 340, bh = 120;
+    const bx = Math.round((VIEW.W - bw) / 2), by = Math.round((VIEW.H - bh) / 2);
+    ctx.fillStyle = 'rgba(6,12,26,0.6)';
+    ctx.fillRect(0, 0, VIEW.W, VIEW.H);
+    this.panel(ctx, bx, by, bw, bh);
+    drawText(ctx, 'INTERVALO', VIEW.W / 2, by + 12, {
+      size: 18, color: C.gold, align: 'center', shadow: C.ink, weight: 'bold',
+    });
+    drawText(ctx, `${run.period + 1}º TEMPO FECHADO`, VIEW.W / 2, by + 42, {
+      size: 7, color: C.cream, align: 'center',
+    });
+    drawText(ctx, `${run.lastGain} / ${run.lastTarget} ${run.goalLabel}`, VIEW.W / 2, by + 56, {
+      size: 8, color: run.lastWon ? C.green : C.rose, align: 'center', shadow: C.ink,
+    });
+    drawText(ctx, `PLACAR ${Math.round(run.player.score)}`, VIEW.W / 2, by + 72, {
+      size: 6, color: C.blue, align: 'center',
+    });
+    const nextTarget = run.def.goal.per?.[run.period + 1];
+    drawText(ctx, fit(ctx, nextTarget
+      ? `PRÓXIMO: ${run.period + 2}º TEMPO · ${nextTarget} ${run.goalLabel}`
+      : `PRÓXIMO: ${run.period + 2}º TEMPO`, 300, 6), VIEW.W / 2, by + 90, {
+      size: 6, color: C.dim, align: 'center',
     });
   }
 
@@ -854,7 +907,7 @@ export class UI {
       });
     }
 
-    drawText(ctx, 'SURFN 2000', 22, 12, {
+    drawText(ctx, 'SURFN', 22, 12, {
       size: 22, color: C.cream, shadow: '#5a2a1c', weight: 'bold',
     });
     drawText(ctx, 'o campeonato mais 2007 da sua vida', 24, 35, {
@@ -1012,19 +1065,22 @@ export class UI {
       }
       if (!unlocked) {
         ctx.globalAlpha = 0.4;
-        this.art.drawSurf(ctx, 'ic_lock', x + cw - 12, y + 10, { anchor: 'center', scale: 0.55 });
+        // beside the short chapter tag, not on the title's baseline: the lock
+        // used to sit on top of the title and force it to truncate early
+        this.art.drawSurf(ctx, 'ic_lock', x + cw - 11, y + 6, { anchor: 'center', scale: 0.55 });
         ctx.globalAlpha = 1;
       }
+      this.clipCard(ctx, x, y, cw, chh);
       drawText(ctx, fit(ctx, c.tag, cw - 30, 4), x + 7, y + 5, {
         size: 4, color: unlocked ? C.blue : '#5a6273',
       });
       drawText(ctx, fit(ctx, c.title, cw - 14, 6),
         x + 7, y + 14, { size: 6, color: unlocked ? C.cream : '#5a6273', shadow: C.ink });
-      drawText(ctx, fit(ctx, `${MAP_META[c.map].note} · ${c.duration}s`, cw - 14, 4),
+      drawText(ctx, fit(ctx, `${MAP_META[c.map].note} · 3 × ${Math.round(c.duration / 3)}s`, cw - 14, 4),
         x + 7, y + 27, {
           size: 4, color: unlocked ? C.dim : '#48506a',
         });
-      drawText(ctx, fit(ctx, game.goalText(c), cw - 14, 5), x + 7, y + 36, {
+      drawText(ctx, fit(ctx, game.goalText(c, ' por tempo'), cw - 14, 5), x + 7, y + 36, {
         size: 5, color: unlocked ? C.gold : '#48506a',
       });
       const stars = game.starsFor(c.id);
@@ -1036,6 +1092,7 @@ export class UI {
       drawText(ctx, `${game.bestOf(c.id)}`, x + cw - 7, y + 51, {
         size: 4, color: unlocked ? C.dim : '#48506a', align: 'right',
       });
+      ctx.restore();
     });
 
     // details strip
@@ -1367,7 +1424,7 @@ export class UI {
     ctx.strokeRect(sx + 0.5, sy + 0.5, sw - 1, sh - 1);
     ctx.fillStyle = '#0b1226';
     ctx.fillRect(sx + 16, sy + 30, sw - 32, 42);
-    drawText(ctx, 'SURFN 2000', sx + 24, sy + 36, { size: 4, color: C.blue });
+    drawText(ctx, 'SURFN', sx + 24, sy + 36, { size: 4, color: C.blue });
     drawText(ctx, 'LADO A', sx + sw - 24, sy + 36, { size: 4, color: C.dim, align: 'right' });
     const spin = game.tapePlaying ? this.t * 3.2 : this.t * 0.16;
     [sx + 50, sx + sw - 50].forEach((rx) => {
@@ -1594,7 +1651,7 @@ export class UI {
       });
       drawText(ctx, 'Obrigado por jogar. Não esqueça de repassar para 10 amigos.',
         VIEW.W / 2, 288, { size: 7, color: C.blue, align: 'center' });
-      drawText(ctx, 'SURFN 2000', VIEW.W - 24, 288, { size: 7, color: C.dim, align: 'right' });
+      drawText(ctx, 'SURFN', VIEW.W - 24, 288, { size: 7, color: C.dim, align: 'right' });
     }
 
     this.button(ctx, game, 'gallery:back', 24, 326, 120, 22, 'VOLTAR', { size: 7 });
@@ -1613,13 +1670,19 @@ export class UI {
     });
     const list = game.remixMods();
     const onCount = list.filter((m) => game.mods.isOn(m.id)).length;
-    drawText(ctx, `${onCount}/${list.length} LIGADOS`, VIEW.W - 24, 16, {
+    // more mods than the frame holds: page them instead of stacking cards
+    // over the buttons at the bottom
+    const PER_PAGE = 8;
+    const pages = Math.max(1, Math.ceil(list.length / PER_PAGE));
+    const page = clamp(Math.floor(game.remixIndex / PER_PAGE), 0, pages - 1);
+    drawText(ctx, `${onCount}/${list.length} LIGADOS · PÁG ${page + 1}/${pages}`, VIEW.W - 24, 16, {
       size: 6, color: onCount ? C.green : C.dim, align: 'right',
     });
     const cw = 286, chh = 40, gx = 12, gy = 4, y0 = 54;
     const x0 = Math.round((VIEW.W - (2 * cw + gx)) / 2);
-    list.forEach((m, i) => {
-      const col = i % 2, row = Math.floor(i / 2);
+    list.slice(page * PER_PAGE, page * PER_PAGE + PER_PAGE).forEach((m, k) => {
+      const i = page * PER_PAGE + k;
+      const col = k % 2, row = Math.floor(k / 2);
       const x = x0 + col * (cw + gx);
       const y = y0 + row * (chh + gy);
       const on = game.mods.isOn(m.id);
@@ -1655,7 +1718,7 @@ export class UI {
     drawText(ctx, 'W/A/S/D navega · E liga/desliga · R zoeira total · ESC volta', x0 + 262, 300, {
       size: 4, color: C.dim,
     });
-    drawText(ctx, 'carregue mods da comunidade em window.SURFN_MODS ou no localStorage',
+    drawText(ctx, 'mods da comunidade: SURFN_MOD.add({ id, title, desc, settings }) ou window.SURFN_MODS',
       VIEW.W / 2, 322, { size: 4, color: 'rgba(231,240,248,0.4)', align: 'center' });
     this.drawTicker(ctx, game);
   }
@@ -1884,7 +1947,7 @@ export class UI {
       ctx.fill();
     }
     ctx.globalAlpha = 1;
-    drawText(ctx, 'SURFN 2000', VIEW.W / 2, 118, {
+    drawText(ctx, 'SURFN', VIEW.W / 2, 118, {
       size: 26, color: C.cream, align: 'center', shadow: '#5a2a1c', weight: 'bold',
     });
     drawText(ctx, 'calibrando a prancha e o modem...', VIEW.W / 2, 154, {

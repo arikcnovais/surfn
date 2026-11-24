@@ -457,7 +457,7 @@ export class Minigames {
   drawFooter(ctx, hint) {
     this.panel(ctx, 14, 320, 612, 20);
     drawText(ctx, hint, 24, 325, { size: 5, color: C.cream });
-    drawText(ctx, 'SURFN 2000 · FLIPERAMA DA LAN', 614, 325, {
+    drawText(ctx, 'SURFN · FLIPERAMA DA LAN', 614, 325, {
       size: 4, color: C.dim, align: 'right',
     });
   }

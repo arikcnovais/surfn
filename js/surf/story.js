@@ -96,7 +96,7 @@ export const CHAPTERS = [
   {
     id: 'ch1', map: 'fy_pool_day', title: 'DISKADA NO POOL DAY',
     tag: 'CAPÍTULO 1', mode: 'score',
-    duration: 150, goal: { type: 'score', value: 2000 },
+    duration: 420, goal: { type: 'score', value: 2000 },
     rivals: [{ name: 'Kaká Pentelho', variant: 'roxo', ai: 1 }],
     tips: 'WASD desliza · SHIFT acelera · ESPAÇO pula · J/K/L manda manobra no ar',
     intro: [
@@ -104,6 +104,7 @@ export const CHAPTERS = [
       { who: 'zel', text: 'Vim surfar, seu Naldo. Dizem que o pool_day daqui é lendário.' },
       { who: 'naldo', text: 'Lendário é pouco. Em 2004 o Kaká Pentelho ficou 3 horas na fila do PC 4 só pra cair na piscina.' },
       { who: 'naldo', text: 'Regra é simples: WASD pra deslizar, SHIFT pro gás, ESPAÇO pra voar, J/K/L pra manobra. E não reclama do lag.' },
+      { who: 'naldo', text: 'Três tempos, um apito no meio: 2.000 pontos por tempo e 2.500 no último. Fecha dois e leva a fita.' },
       { who: 'naldo', text: 'Antes de cair na água: qual vai ser teu estilo hoje?',
         choices: [
           { label: 'TURBO DA LAN HOUSE', reply: 'Boa escolha. Enche o turbo e sai voando. Se bater, fala que foi lag.', effect: { type: 'turbo', value: 100 } },
@@ -111,11 +112,11 @@ export const CHAPTERS = [
         ] },
       { who: 'zel', text: 'E se eu cair?' },
       { who: 'naldo', text: 'Aí você levanta e finge que foi de propósito. Igual todo mundo na internet.' },
-      { who: 'kaka', text: 'kkk olha o novato. Aposto 10 tampinhas que ele não faz 1.200 pontos.' },
+      { who: 'kaka', text: 'kkk olha o novato. Aposto 10 tampinhas que ele não faz 2.000 pontos.' },
       { who: 'zel', text: 'Aceito. Mas se eu ganhar, você tira o "™" do nick.' },
     ],
     outro: [
-      { who: 'naldo', text: '1.200 pontos! Nem o PC 4 travando conseguiu te parar.' },
+      { who: 'naldo', text: '2.000 pontos! Nem o PC 4 travando conseguiu te parar.' },
       { who: 'kaka', text: 'kkk sorte de principiante' },
       { who: 'zel', text: 'Fala isso de perto, óculos de avô.' },
       { who: 'naldo', text: 'Calma, calma. Guarda a rivalidade pra season 2.' },
@@ -124,7 +125,7 @@ export const CHAPTERS = [
   {
     id: 'ch2', map: 'fy_iceworld', title: 'ICEWORLD OU MORRER',
     tag: 'CAPÍTULO 2', mode: 'surf',
-    duration: 160, goal: { type: 'surf', value: 9 },
+    duration: 420, goal: { type: 'surf', value: 9 },
     minigame: { id: 'surf', name: 'SURF_CLASSIC', short: 'SURF', bonus: 'turbo' },
     rivals: [{ name: 'Kaká Pentelho', variant: 'roxo', ai: 2 },
       { name: 'Zé do Emule', variant: 'verde', ai: 1 }],
@@ -136,6 +137,7 @@ export const CHAPTERS = [
       { who: 'zel', text: 'Zel.' },
       { who: 'kaka', text: 'Sem número? Sem clan? Sem nada? Você é tipo página do Yahoo sem resposta.' },
       { who: 'kaka', text: 'Regra da casa: antes do gelo, uma queda de surf_classic no PC 2. Quem cair primeiro paga a hora. kkk' },
+      { who: 'kaka', text: '9 cristas por tempo, 11 no último. Quem ficar abaixo disso paga a hora do PC 2.' },
       { who: 'zel', text: 'Então abre o PC 2. Vou cair menos que você.' },
       { who: 'ze', text: 'Ô gente, acabei de baixar esse mapa. Tá em 87%. Deve prestar.' },
       { who: 'zel', text: 'Zé, o mapa é de gelo. Literalmente.' },
@@ -151,7 +153,7 @@ export const CHAPTERS = [
   {
     id: 'ch3', map: 'surf_lagoon', title: 'A LAGOA DO FOTOLOG',
     tag: 'CAPÍTULO 3', mode: 'relics',
-    duration: 160, goal: { type: 'relics', value: 8 },
+    duration: 450, goal: { type: 'relics', value: 8 },
     minigame: { id: 'pipa', name: 'PIPA NA LAJE', short: 'PIPA', bonus: 'score', value: 700 },
     rivals: [{ name: 'Bruxinha do Fotolog', variant: 'verde', ai: 2 },
       { name: 'Kaká Pentelho', variant: 'roxo', ai: 2 }],
@@ -163,6 +165,7 @@ export const CHAPTERS = [
       { who: 'bruxa', text: 'Nessa lagoa tem relíquias perdidas: CD do Kazaa, disquete de trabalho de escola, tampinha de guaraná...' },
       { who: 'zel', text: 'Por que alguém surfa atrás de disquete?' },
       { who: 'bruxa', text: 'PORQUE É 2007, ZEL. A GENTE FAZ O QUE DER.' },
+      { who: 'bruxa', text: '8 RELÍQUIAS POR TEMPO, 10 NO ÚLTIMO. SE NÃO FECHAR DOIS TEMPOS, A LAGOA ENGOLHE O TEU FOTOLOG.' },
       { who: 'bruxa', text: 'MAS ANTES: SOLTA UMA PIPA NA LAJE. SE CORTAR CINCO LINHAS, O VENTO ABENÇOA A LAGOA.' },
       { who: 'zel', text: 'Isso é tradição ou preguiça de ir pra água?' },
       { who: 'kaka', text: 'kkk vou pegar todas antes de você. Já postei no Orkut que ia ganhar.' },
@@ -177,7 +180,7 @@ export const CHAPTERS = [
   {
     id: 'ch4', map: 'de_surf_dust', title: 'DUST2 NÃO TEM MAR',
     tag: 'CAPÍTULO 4', mode: 'flags',
-    duration: 180, goal: { type: 'flags', value: 3 },
+    duration: 450, goal: { type: 'flags', value: 3 },
     rivals: [{ name: 'Kaká Pentelho', variant: 'roxo', ai: 3 },
       { name: 'Bruxinha do Fotolog', variant: 'verde', ai: 2 }],
     allies: [{ name: 'Zé do Emule', variant: 'azul', ai: 2 }],
@@ -190,6 +193,7 @@ export const CHAPTERS = [
       { who: 'ze', text: 'Ué, joga o que já baixou. É tipo Dust2, só que molhado.' },
       { who: 'zel', text: '... tá bom.' },
       { who: 'ze', text: 'Se travar, é o servidor. Se cair, é o modem. Nunca é a gente.' },
+      { who: 'ze', text: '3 bandeiras por tempo, 4 no último. Leva pra base verde e a gente fecha a conta.' },
       { who: 'kaka', text: 'Falou o cara que tem 300 vírus na pasta de música.' },
       { who: 'ze', text: 'São 299. Um é o Winamp.' },
     ],
@@ -203,7 +207,7 @@ export const CHAPTERS = [
   {
     id: 'ch5', map: 'cs_surf_assault', title: 'OPERAÇÃO TEMPESTADE',
     tag: 'CAPÍTULO 5', mode: 'team',
-    duration: 180, goal: { type: 'team', value: 11000 },
+    duration: 480, goal: { type: 'team', value: 11000 },
     minigame: { id: 'cobra', name: 'JOGO DA COBRINHA', short: 'COBRINHA', bonus: 'turbo' },
     weather: 'storm',
     rivals: [{ name: 'Kaká Pentelho', variant: 'roxo', ai: 3 },
@@ -217,6 +221,7 @@ export const CHAPTERS = [
       { who: 'tia', text: 'FILHOTE, ESSA CORRENTE SÓ VALE SE CHEGAR EM 10 PESSOAS. TREINA NA COBRINHA DO TIJOLÃO PRIMEIRO.' },
       { who: 'zel', text: 'Tia, a cobrinha do Nokia é de 1998.' },
       { who: 'tia', text: 'E A CORRENTE É DE 2004. TUDO ANTIGO FUNCIONA.' },
+      { who: 'tia', text: '11.000 PONTOS POR TEMPO, 13.750 NO ÚLTIMO. A CORRENTE SÓ QUEBRA SE FECHAR DOIS.' },
       { who: 'naldo', text: 'A doca tá alagada e o mar tá tipo MSN: instável.' },
       { who: 'zel', text: 'Então é hoje que eu viro lenda ou viro print de vergonha.' },
       { who: 'kaka', text: 'Vou torcer por você. Quer dizer, torcer contra. Quer dizer... kkk.' },
@@ -231,7 +236,7 @@ export const CHAPTERS = [
   {
     id: 'ch6', map: 'pool_temple', title: 'O TEMPLO DO ORKUT',
     tag: 'CAPÍTULO 6', mode: 'score', weather: 'night',
-    duration: 170, goal: { type: 'score', value: 9000 },
+    duration: 480, goal: { type: 'score', value: 9000 },
     rivals: [{ name: 'Rei do Pool Day', variant: 'dourado', ai: 4 }],
     tips: 'O Rei conhece cada canto do templo. Colete relíquias e emende combos para virar.',
     intro: [
@@ -240,6 +245,7 @@ export const CHAPTERS = [
       { who: 'rei', text: 'Lenda é o que sobra quando ninguém consegue te vencer.' },
       { who: 'zel', text: 'Ou quando ninguém consegue te ver, porque você usa um elmo dourado.' },
       { who: 'rei', text: 'Silêncio. Aqui no templo, o mar obedece a mim. Mostra o que você sabe.' },
+      { who: 'rei', text: '9.000 pontos no templo e 11.250 no último tempo. O mar obedece a quem soma.' },
       { who: 'naldo', text: 'Dica do tio: nesse templo tem relíquia escondida e o piso é escorregadio que nem página de recados do Orkut.' },
     ],
     outro: [
@@ -253,7 +259,7 @@ export const CHAPTERS = [
   {
     id: 'ch7', map: 'surf_heaven', title: 'ZEL.EXE',
     tag: 'CAPÍTULO 7', mode: 'score', weather: 'glitch',
-    duration: 190, goal: { type: 'score', value: 12000 },
+    duration: 510, goal: { type: 'score', value: 12000 },
     minigame: { id: 'campo', name: 'CAMPO MINADO', short: 'CAMPO', bonus: 'score', value: 900 },
     rivals: [{ name: 'ZEL.EXE', variant: 'sombra', ai: 5 },
       { name: 'Rei do Pool Day', variant: 'dourado', ai: 3 }],
@@ -270,6 +276,7 @@ export const CHAPTERS = [
       { who: 'zel', text: 'Eu tenho bugs?' },
       { who: 'naldo', text: 'Todo mundo tem, muleque. A diferença é que uns sabem reiniciar.' },
       { who: 'exe', text: 'ÚLTIMA PARTIDA. SE EU GANHAR, EU VOU EMBORA DA LAN E LEVO O MODEM.' },
+      { who: 'exe', text: '12.000 PONTOS POR TEMPO, 15.000 NO ÚLTIMO. NEM UM BUG A MAIS.' },
       { who: 'zel', text: 'O modem não. Até a Tia Márcia depende dele.' },
     ],
     outro: [
@@ -285,7 +292,7 @@ export const CHAPTERS = [
   {
     id: 'ch8', map: 'surf_lagoon', title: 'O MAPA DO ARQUIPÉLAGO',
     tag: 'CAPÍTULO 8', mode: 'relics',
-    duration: 200, goal: { type: 'relics', value: 9 },
+    duration: 510, goal: { type: 'relics', value: 9 },
     rivals: [{ name: 'Bruxinha do Fotolog', variant: 'verde', ai: 3 },
       { name: 'Kaká Pentelho', variant: 'roxo', ai: 3 },
       { name: 'Zé do Emule', variant: 'verde', ai: 2 }],
@@ -298,6 +305,7 @@ export const CHAPTERS = [
       { who: 'ze', text: 'Então as ilhas são tipo pastas do mesmo HD?' },
       { who: 'zel', text: 'E a gente pode surfar de uma pra outra?' },
       { who: 'naldo', text: 'Se você achar as relíquias que ligam os cabos, sim. Mas tem um nome rabiscado no canto: ZEL.' },
+      { who: 'naldo', text: '9 relíquias por tempo, 11 no último. O mapa só abre se a gente fechar dois tempos.' },
       { who: 'zel', text: 'Zel... eu?' },
       { who: 'bruxa', text: 'NÃO. A LETRA É DE 1999. VOCÊ USAVA FRALDA.' },
       { who: 'kaka', text: 'kkk o novato tem um fã secreto. Ou um clone. Ou um pai perdido.' },
@@ -320,7 +328,7 @@ export const CHAPTERS = [
   {
     id: 'ch9', map: 'cs_surf_assault', title: 'A LENDA DO SERVIDOR',
     tag: 'CAPÍTULO 9', mode: 'gates', weather: 'storm',
-    duration: 210, goal: { type: 'gates', value: 24 },
+    duration: 540, goal: { type: 'gates', value: 24 },
     music: 'omen',
     rivals: [{ name: 'Kaká Pentelho', variant: 'roxo', ai: 4 },
       { name: 'Rei do Pool Day', variant: 'dourado', ai: 4 },
@@ -335,6 +343,7 @@ export const CHAPTERS = [
       { who: 'naldo', text: 'Vocês precisam parar de transformar lenda em competição. Mas... se ele aparecer, eu quero ver.' },
       { who: 'zel', text: 'Então vamos abrir o caminho. A tempestade não vai me parar.' },
       { who: 'rei', text: 'Escolhe como quer encarar: treino pesado ou zoeira com a galera?' },
+      { who: 'rei', text: '24 gates por tempo, 30 no último. Na tempestade, quem para afunda.' },
       { who: 'zel', text: 'Eu escolho...',
         choices: [
           { label: 'TREINO PESADO', reply: 'Então segura. Vou abrir 24 gates na chuva e não vou errar nenhum.', effect: { type: 'turbo', value: 100 } },
@@ -355,7 +364,7 @@ export const CHAPTERS = [
   {
     id: 'ch10', map: 'surf_heaven', title: 'O DONO DO ARQUIPÉLAGO',
     tag: 'CAPÍTULO 10', mode: 'score', weather: 'glitch',
-    duration: 230, goal: { type: 'score', value: 18000 },
+    duration: 600, goal: { type: 'score', value: 18000 },
     music: 'finale',
     rivals: [{ name: 'ZEL.EXE', variant: 'sombra', ai: 5 },
       { name: 'Rei do Pool Day', variant: 'dourado', ai: 5 }],
@@ -370,6 +379,7 @@ export const CHAPTERS = [
       { who: 'tia', text: 'FILHOTE, LEVEI BOLACHA PRA TODO MUNDO. SE PERDER, A GENTE COME MESMO ASSIM.' },
       { who: 'zel', text: 'Então é hoje. O nome Zel vai valer alguma coisa.' },
       { who: 'rei', text: 'Uma última escolha antes da final: todo mundo junto ou só você e a prancha?' },
+      { who: 'naldo', text: '18.000 pontos por tempo, 22.500 no último. O placar de 1999 esperou por isso.' },
       { who: 'zel', text: 'Eu escolho...',
         choices: [
           { label: 'TODO MUNDO JUNTO', reply: 'Então bora. A galera inteira entrou na torcida. Isso vale turbo.', effect: { type: 'turbo', value: 100 } },
@@ -430,7 +440,7 @@ export const POSTGAME_HEATS = [
 export const BONUS_STAGES = [
   {
     id: 'bonus_pipa', title: 'CEROL PROIBIDO', map: 'surf_lagoon',
-    duration: 150, goal: { type: 'pipa', value: 10 }, weather: 'dusk',
+    duration: 270, goal: { type: 'pipa', value: 10 }, weather: 'dusk',
     rivals: [{ name: 'Kaká Pentelho', variant: 'roxo', ai: 4 },
       { name: 'Bruxinha do Fotolog', variant: 'verde', ai: 3 }],
     allies: [{ name: 'Zé do Emule', variant: 'azul', ai: 3 }],
@@ -440,7 +450,7 @@ export const BONUS_STAGES = [
   },
   {
     id: 'bonus_surf', title: 'MARATONA DE CRISTAS', map: 'fy_pool_day',
-    duration: 150, goal: { type: 'surf', value: 12 }, weather: 'sun',
+    duration: 220, goal: { type: 'surf', value: 12 }, weather: 'sun',
     rivals: [{ name: 'Rei do Pool Day', variant: 'dourado', ai: 4 },
       { name: 'Kaká Pentelho', variant: 'roxo', ai: 4 },
       { name: 'ZEL.EXE', variant: 'sombra', ai: 3 }],
@@ -451,7 +461,7 @@ export const BONUS_STAGES = [
   },
   {
     id: 'bonus_flags', title: 'GUERRA DE BANDEIRA', map: 'cs_surf_assault',
-    duration: 200, goal: { type: 'flags', value: 4 }, weather: 'storm',
+    duration: 240, goal: { type: 'flags', value: 4 }, weather: 'storm',
     rivals: [{ name: 'Kaká Pentelho', variant: 'roxo', ai: 5 },
       { name: 'ZEL.EXE', variant: 'sombra', ai: 5 },
       { name: 'Rei do Pool Day', variant: 'dourado', ai: 4 }],
@@ -463,7 +473,7 @@ export const BONUS_STAGES = [
   },
   {
     id: 'bonus_team', title: 'TRIO DA LAN', map: 'pool_temple',
-    duration: 200, goal: { type: 'team', value: 20000 }, weather: 'night',
+    duration: 300, goal: { type: 'team', value: 20000 }, weather: 'night',
     rivals: [{ name: 'Rei do Pool Day', variant: 'dourado', ai: 5 },
       { name: 'ZEL.EXE', variant: 'sombra', ai: 5 },
       { name: 'Kaká Pentelho', variant: 'roxo', ai: 4 }],
@@ -475,7 +485,7 @@ export const BONUS_STAGES = [
   },
   {
     id: 'bonus_relics', title: 'ARQUIVO MORTO', map: 'surf_heaven',
-    duration: 190, goal: { type: 'relics', value: 14 }, weather: 'glitch',
+    duration: 280, goal: { type: 'relics', value: 14 }, weather: 'glitch',
     rivals: [{ name: 'ZEL, A LENDA', variant: 'zel', ai: 6 },
       { name: 'ZEL.EXE', variant: 'sombra', ai: 5 },
       { name: 'Kaká Pentelho', variant: 'roxo', ai: 4 }],
@@ -486,7 +496,7 @@ export const BONUS_STAGES = [
   },
   {
     id: 'bonus_secret', title: 'A FASE QUE NÃO EXISTE', map: 'de_surf_dust',
-    duration: 180, goal: { type: 'gates', value: 30 }, weather: 'glitch',
+    duration: 260, goal: { type: 'gates', value: 30 }, weather: 'glitch',
     rivals: [{ name: 'ZEL, A LENDA', variant: 'zel', ai: 7 },
       { name: 'ZEL.EXE', variant: 'sombra', ai: 6 },
       { name: 'Kaká Pentelho', variant: 'roxo', ai: 5 }],
@@ -802,7 +812,7 @@ export const TICKER_TIPS = [
 ];
 
 export const CREDITS = [
-  'SURFN 2000 — criado por FloatingSkies (Arikcnovais / azzynovais). Mesma pessoa, três nicks.',
+  'SURFN — criado por FloatingSkies (Arikcnovais / azzynovais). Mesma pessoa, três nicks.',
   'Código, arte, level design, texto e direção: FloatingSkies.',
   '10 capítulos de carreira, 5 capítulos da Lenda e pós-game: 7 ilhas, provas, festas, mods e conquistas.',
   'Zel recortado de spritesheets/zel v2 spritesheet.png (16 poses, 4 direções, shorts de praia).',

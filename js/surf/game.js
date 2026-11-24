@@ -496,7 +496,7 @@ export class Game {
     if (idx >= RANKS.length - 1) return 'ranking máximo';
     return `${RANKS[idx + 1].xp - this.save.xp} XP pro próximo`;
   }
-  goalText(c) {
+  goalText(c, suffix = '') {
     const g = c.goal;
     let text = 'Sobreviva';
     if (g.type === 'score') text = `Faça ${g.value} pontos`;
@@ -507,6 +507,7 @@ export class Game {
     else if (g.type === 'flags') text = `Capture ${g.value} bandeiras`;
     else if (g.type === 'team') text = `Faça ${g.value} pontos com o time`;
     else if (g.type === 'place') text = 'Termine em 1º lugar';
+    if (suffix && g.type !== 'place') text += suffix;
     if (c.minigame) text += ` · ${c.minigame.short}`;
     return text;
   }
@@ -1042,7 +1043,7 @@ export class Game {
     });
     this.menuRun = {
       map, player, rivals,
-      def: { flow: 'menu', goal: { type: 'score', value: 99999 }, title: 'SURFN 2000' },
+      def: { flow: 'menu', goal: { type: 'score', value: 99999 }, title: 'SURFN' },
       time: 9999, phase: 'race', gateIdx: 0,
       gatePos: map.gates[0] || { x: spawn.x, y: spawn.y },
       gateT: 0,
@@ -1134,7 +1135,7 @@ export class Game {
   }
 
   /* --------------------------------------------------------------- remix */
-  remixMods() { return this.mods.all().slice(0, 10); }
+  remixMods() { return this.mods.all(); }
 
   zoeiraOn() {
     const list = this.remixMods();
@@ -2374,6 +2375,28 @@ export class Game {
     cfg.duration = Math.max(20, Math.round(cfg.duration * fx.durationFactor));
     if (cfg.goal.type !== 'place') cfg.goal.value = Math.round(cfg.goal.value * fx.goalFactor);
     if (fx.aiBonus) cfg.rivals = (cfg.rivals || []).map((r) => ({ ...r, ai: Math.min(7, (r.ai || 1) + fx.aiBonus) }));
+    if (fx.soloRun) cfg.rivals = [];
+    // Career levels are played in periods (first half, half-time, second half)
+    // and were stretched to three times the stage the goal was tuned for, so
+    // each period asks the full authored meta and the deciding period asks a
+    // quarter more: the target never gets thin before the final whistle.
+    // Shorter runs (bonus, daily, parties, events, league, legend) stay one
+    // continuous lap, so their authored target holds for the whole clock.
+    const splitGoal = ['score', 'gates', 'relics', 'pipa', 'surf', 'flags', 'team']
+      .includes(cfg.goal.type);
+    cfg.periods = (cfg.flow === 'career' && splitGoal)
+      ? clamp(Math.round(fx.periods || 3), 1, 5) : 1;
+    if (cfg.periods > 1) {
+      // extra periods (mod) share the same bar, so they get a proportional base
+      const base = cfg.goal.value * (cfg.periods > 3 ? 3 / cfg.periods : 1);
+      const per = [];
+      for (let k = 0; k < cfg.periods; k++) {
+        const mul = k === cfg.periods - 1 ? 1.25 : 1;
+        per.push(Math.max(1, Math.round(base * mul)));
+      }
+      cfg.goal.per = per;
+      cfg.goal.value = per.reduce((a, b) => a + b, 0);
+    }
     if (!cfg.cutscene && cfg.flow === 'heat') cfg.cutscene = CUTSCENES.squad;
     if (!cfg.cutscene && cfg.flow === 'league') cfg.cutscene = CUTSCENES.squad;
     if (!cfg.cutscene && cfg.flow === 'event') cfg.cutscene = CUTSCENES.event;
@@ -2421,7 +2444,19 @@ export class Game {
       map,
       player,
       rivals,
-      time: cfg.duration,
+      periods: cfg.periods || 1,
+      period: 0,
+      periodLen: cfg.duration / (cfg.periods || 1),
+      time: cfg.duration / (cfg.periods || 1),
+      periodWins: [],
+      periodBase: 0,
+      lastGain: 0,
+      lastTarget: 0,
+      lastWon: false,
+      goalHit: false,
+      breakT: 0,
+      invert: !!fx.invertControls,
+      turboEternal: !!fx.turboEternal,
       phase: cfg.cutscene?.shots?.length ? 'cutscene'
         : cfg.intro && cfg.intro.length ? 'dialog' : 'countdown',
       gateIdx: 0,
@@ -2469,9 +2504,18 @@ export class Game {
     if (cfg.goal.type === 'pipa') this.spawnKites(this.run);
     if (cfg.goal.type === 'surf') this.spawnWaves(this.run);
     if (cfg.goal.type === 'flags') this.setupFlags(this.run);
-    if (cfg.mods && cfg.mods.includes('chaos')) {
-      for (let i = 0; i < 2; i++) {
+    if (fx.sharks || (cfg.mods && cfg.mods.includes('chaos'))) {
+      for (let i = 0; i < 2 + (fx.sharks ? 2 : 0); i++) {
         this.run.fins.push({ x: rand(4, map.w - 4), y: rand(4, map.h - 4), ph: rand(0, 6) });
+      }
+    }
+    // chaotic community mod: kites all over the map, whatever the goal is
+    if (fx.kiteStorm) {
+      this.spawnKites(this.run);
+      const base = this.run.kites.slice();
+      for (let i = 0; i < 8; i++) {
+        const k = base[i % base.length];
+        this.run.kites.push({ ...k, ph: rand(0, 6.28) });
       }
     }
     this.countdown = 3.4;
@@ -2715,6 +2759,20 @@ export class Game {
       return;
     }
 
+    // half-time: the sea freezes for a beat, the board reads out the period
+    if (run.phase === 'break') {
+      run.breakT -= dt;
+      if (run.breakT <= 0) {
+        run.period++;
+        run.time = run.periodLen;
+        run.phase = 'race';
+        this.ui.showBanner(`${run.period + 1}º TEMPO`, 'segue o jogo', '#ffe066', 2.2);
+        this.audio.sfx('gate');
+      }
+      this.updateCamera(dt);
+      return;
+    }
+
     if (i.hit('KeyM')) {
       this.muted = !this.muted;
       this.audio.setMuted(this.muted);
@@ -2755,6 +2813,7 @@ export class Game {
     if (i.down('KeyA', 'ArrowLeft')) { ix -= 1; iy += 1; }
     if (i.down('KeyD', 'ArrowRight')) { ix += 1; iy -= 1; }
     const dir = { x: ix, y: iy };
+    if (run.invert) { dir.x = -dir.x; dir.y = -dir.y; }
     const canControl = player.lockT <= 0;
     player.speedMul = sandbox && (run.needs.energy <= 10 || run.needs.food <= 4) ? 0.72 : 1;
     if (player.boostT <= 0 && i.down('ShiftLeft', 'ShiftRight')) {
@@ -2815,6 +2874,7 @@ export class Game {
     // player's trick timer
     if (player.trick) player.trick.t += dt;
     player.update(dt, { map: run.map, sea: this.sea, input: dir, canControl, ...env });
+    if (run.turboEternal) player.turbo = 100;
     if (player.justLaunched) {
       player.justLaunched = false;
       this.audio.sfx('jump');
@@ -3136,18 +3196,17 @@ export class Game {
       if (run.winPending <= 0) this.finishRun(true);
       return;
     }
-    // win conditions that can trigger early
-    if (run.def.goal.type !== 'place') {
-      const done = this.goalDone(run);
-      if (done && run.elapsed > 6) {
-        run.winPending = 1.6;
-        this.ui.showBanner('META BATIDA!', 'manda o print pro Orkut', '#8ecf63', 1.6);
-        this.audio.sfx('quest');
-      }
+    // Hitting the goal clears the meta, but the match runs to the whistle:
+    // the level is played in periods, so an early goal cannot cut it short.
+    if (!run.goalHit && run.def.goal.type !== 'place' && run.elapsed > 6 && this.goalDone(run)) {
+      run.goalHit = true;
+      this.ui.showBanner('META BATIDA!', run.periods > 1
+        ? 'agora soma nos tempos' : 'segura o ritmo até o apito', '#8ecf63', 2.2);
+      this.audio.sfx('quest');
     }
     if (run.time <= 0) {
       run.time = 0;
-      this.finishRun(this.goalDone(run));
+      this.endPeriod();
     }
   }
 
@@ -3345,6 +3404,47 @@ export class Game {
     return false;
   }
 
+  /* accumulated goal progress — the same numbers the HUD shows */
+  periodProgress(run) {
+    const g = run.def.goal;
+    if (g.type === 'score') return run.player.score;
+    if (g.type === 'gates') return run.player.gates;
+    if (g.type === 'relics') return run.player.relics;
+    if (g.type === 'pipa') return run.player.pipas || 0;
+    if (g.type === 'surf') return run.player.waves || 0;
+    if (g.type === 'flags') return run.flags?.score.player || 0;
+    if (g.type === 'team') return Math.round(run.teamScore || 0);
+    return run.player.score;
+  }
+
+  /* the whistle: close the period, bank the partial and open half-time */
+  endPeriod() {
+    const run = this.run;
+    if (!run) return;
+    const goal = run.def.goal;
+    // a single run has no whistle in the middle: the clock simply ends it
+    if (run.periods <= 1) { this.finishRun(); return; }
+    const now = this.periodProgress(run);
+    const gain = Math.max(0, now - run.periodBase);
+    const target = Math.max(1, goal.per?.[run.period]
+      ?? Math.ceil(goal.value / run.periods));
+    const won = gain >= target;
+    run.periodWins.push(won);
+    run.periodBase = now;
+    run.lastGain = Math.round(gain);
+    run.lastTarget = target;
+    run.lastWon = won;
+    this.audio.sfx(won ? 'quest' : 'deny');
+    this.ui.showBanner(`${run.period + 1}º TEMPO FECHADO`,
+      `${run.lastGain} / ${target} ${run.goalLabel}`, won ? '#8ecf63' : '#ff9f9f', 3);
+    if (run.period + 1 < run.periods) {
+      run.phase = 'break';
+      run.breakT = 3.4;
+    } else {
+      this.finishRun(run.periodWins.filter(Boolean).length >= Math.ceil(run.periods / 2));
+    }
+  }
+
   /* ---------------------------------------------------------------- results */
   finishRun(winOverride) {
     const run = this.run;
@@ -3355,8 +3455,10 @@ export class Game {
     const pos = board.findIndex((r) => r.isPlayer) + 1;
     const total = board.length;
     const goal = run.def.goal;
+    const wonPeriods = run.periodWins.filter(Boolean).length;
     let win = winOverride;
     if (goal.type === 'place') win = pos <= goal.value;
+    else if (run.periods > 1) win = wonPeriods >= Math.ceil(run.periods / 2);
     else win = this.goalDone(run);
     const def = run.def;
     const id = def.id;
@@ -3385,6 +3487,8 @@ export class Game {
     } else {
       stars = win ? (p.score > 4500 ? 3 : 2) : pos === 2 ? 1 : 0;
     }
+    // in a match of periods the stars are the periods you actually won
+    if (goal.type !== 'place' && run.periods > 1) stars = wonPeriods;
     if (!win) stars = Math.min(stars, 1);
 
     let reward = '';
@@ -3743,8 +3847,21 @@ export class Game {
     this.ui.begin();
     const live = ['play', 'paused', 'results', 'wallpaper'].includes(this.screenName);
     if (this.screenName === 'minigames') {
-      // the arcade is pure pixel art: keep it on the chunky world layer
-      this.minigames.draw(wctx);
+      // The arcade used to draw everything on the world layer and never touch
+      // the UI layer, so the previous screen's menu stayed frozen on top of it
+      // and showed through every panel. Keep the backdrop and the games on the
+      // chunky layer, but paint the menu chrome on the crisp layer, and always
+      // clear that layer before presenting.
+      const menu = this.minigames.phase === 'menu';
+      if (menu) this.minigames.drawBackdrop(wctx);
+      else this.minigames.draw(wctx);
+      const ctx = this.screen.beginUI();
+      if (menu) {
+        this.uiBegin(ctx);
+        this.minigames.drawMenu(ctx);
+        this.minigames.drawFooter(ctx, 'SETAS escolhe · E joga · ESC volta');
+        this.uiEnd(ctx);
+      }
       this.ui.drawCRT(wctx, this, false);
       this.screen.present();
       return;

@@ -320,6 +320,13 @@ const RULES = [
   [/^Faça (.+) pontos antes do tempo acabar$/, (m) => [`Score ${m[1]} points before time runs out`, `Haz ${m[1]} puntos antes de que acabe el tiempo`]],
   [/^Surfe (\d+) ondas clássicas$/, (m) => [`Surf ${m[1]} classic waves`, `Surfea ${m[1]} olas clásicas`]],
   [/^META (\d+) · (.+)$/, (m) => [`GOAL ${m[1]} · ${t(m[2])}`, `META ${m[1]} · ${t(m[2])}`]],
+  [/^progresso (\d+)\/(\d+)$/, (m) => [`progress ${m[1]}/${m[2]}`, `progreso ${m[1]}/${m[2]}`]],
+  [/^(\d+)º TEMPO · \u2605(\d+)$/, (m) => [`PERIOD ${m[1]} · \u2605${m[2]}`, `TIEMPO ${m[1]} · \u2605${m[2]}`]],
+  [/^(\d+)º TEMPO FECHADO$/, (m) => [`PERIOD ${m[1]} CLOSED`, `TIEMPO ${m[1]} CERRADO`]],
+  [/^(\d+)º TEMPO$/, (m) => [`PERIOD ${m[1]}`, `TIEMPO ${m[1]}`]],
+  [/^PRÓXIMO: (\d+)º TEMPO$/, (m) => [`NEXT: PERIOD ${m[1]}`, `SIGUIENTE: TIEMPO ${m[1]}`]],
+  [/^PLACAR (\d+)$/, (m) => [`SCORE ${m[1]}`, `MARCADOR ${m[1]}`]],
+  [/^ESCOLHA SALVA: (.+)$/, (m) => [`SAVED CHOICE: ${t(m[1])}`, `ELECCIÓN GUARDADA: ${t(m[1])}`]],
 ];
 
 const DECO = /^[<>\u25C0\u25B6\u2665\u00B7\u2022\s]+|[<>\u25C0\u25B6\u2665\u00B7\u2022\s]+$/g;
@@ -357,6 +364,14 @@ export function t(str) {
 function translate(str) {
   const direct = lookup(str);
   if (direct !== str) return direct;
+  // Labels built by concatenation ("Faça 9000 pontos · CAMPO", "noite · 170s")
+  // have no literal entry: localise each segment and glue it back with the
+  // same middle dot, so a joined label never keeps half of it in Portuguese.
+  if (str.includes(' · ')) {
+    const parts = str.split(' · ');
+    const loc = parts.map((p) => lookup(p));
+    if (loc.some((p, i) => p !== parts[i])) return loc.join(' · ');
+  }
   // Menus decorate labels with a heart, arrows or padding (<  ON  >). Keep the
   // decoration and translate what is inside it.
   const core = str.replace(DECO, '');
