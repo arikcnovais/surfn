@@ -210,8 +210,9 @@ export class Art {
     ctx.beginPath();
     ctx.rect(boxX, boxY, size, size);
     ctx.clip();
+    // 126 fits the v2 frame's margin: at 108 the ears clipped into the box
     this.drawZel(ctx, x, boxY + size * 2.15, 'down', 4, variant, {
-      scale: size / 108,
+      scale: size / 126,
     });
     ctx.restore();
   }

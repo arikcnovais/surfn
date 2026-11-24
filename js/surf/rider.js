@@ -90,6 +90,15 @@ export class Rider {
     this.aiEscapeT = 0;
     this.aiEscape = null;
     this.aiPathT = (this.ai * 0.31) % 0.45;
+    // rivals ride their own gate queue instead of sharing the player's buoy
+    this.gatePos = null;
+    this.gateIdx = -1;
+    // half the pack rides the ring the other way, so they meet and fight
+    this.gateDir = this.ai % 2 === 0 ? 1 : -1;
+    this.gateCd = 0;
+    this.gateT = 0;
+    this.contestT = 0;
+    this.contestKey = '';
     this.stuckT = 0;
     this.sprayT = 0;
     this.dirName = 'down';
@@ -333,12 +342,88 @@ export class Rider {
     env.onLand?.(this);
   }
 
+  /* ------------------------------------------------------------ race gates */
+  // Every rider chases its own buoy. Sharing the player's gate left the bots
+  // orbiting one ring until the player moved, so gates are picked per rider:
+  // bank one and the next is already queued on the ring.
+  pickGate(run, skip, minDist = 1.6) {
+    const gates = run?.map?.gates;
+    if (!gates || !gates.length) { this.gatePos = null; return null; }
+    // First gate is the closest buoy. After that the rider laps the island's
+    // gate ring instead of hopping between whichever two are nearest, which
+    // is what kept the old bots circling one corner forever.
+    if (!Number.isFinite(this.gateIdx) || this.gateIdx < 0) {
+      let bestI = 0, bestD = Infinity;
+      for (let i = 0; i < gates.length; i++) {
+        const d = Math.hypot(gates[i].x - this.x, gates[i].y - this.y);
+        if (d < bestD) { bestD = d; bestI = i; }
+      }
+      this.gateIdx = bestI;
+    }
+    const dir = this.gateDir || 1;
+    for (let k = 1; k <= gates.length; k++) {
+      const i = ((this.gateIdx + dir * k) % gates.length + gates.length) % gates.length;
+      const g = gates[i];
+      if (skip && g.x === skip.x && g.y === skip.y) continue;
+      if (Math.hypot(g.x - this.x, g.y - this.y) < minDist) continue;
+      this.gateIdx = i;
+      this.gatePos = { x: g.x, y: g.y };
+      this.aiPathT = 0;
+      this.aiKey = '';
+      return this.gatePos;
+    }
+    this.gatePos = null;
+    this.aiPathT = 0;
+    this.aiKey = '';
+    return null;
+  }
+
+  raceTarget(run) {
+    if (!this.gatePos) this.pickGate(run);
+    return this.gatePos || run?.gatePos || null;
+  }
+
+  bankGate(run, gate) {
+    this.gates++;
+    this.comboUp();
+    const pts = Math.round((110 + this.ai * 20) * Math.max(1, this.combo * 0.8));
+    this.addScore(pts);
+    this.turbo = clamp(this.turbo + 12, 0, 100);
+    this.gateCd = this.style === 'hunter' ? 1.2 : 1.6;
+    this.pickGate(run, gate, 2.2);
+    return pts;
+  }
+
   /* ------------------------------------------------------------------- AI */
   think(dt, map, target, world) {
     if (this.lockT > 0) return { x: 0, y: 0 };
     this.aiT -= dt;
     this.aiWander -= dt;
     this.aiEscapeT = Math.max(0, this.aiEscapeT - dt);
+
+    // Outsmarting: hunters read the race, not just the buoy. If the player is
+    // lining up a gate this rider can reach first, they cut in and take it.
+    this.contestT -= dt;
+    if (this.contestT <= 0 && this.ai >= 2 && this.style === 'hunter' &&
+      world?.player && world.gatePos && !this.air) {
+      this.contestT = 0.8 + Math.random() * 0.7;
+      const g = world.gatePos;
+      const key = g.x + ',' + g.y;
+      const mine = Math.hypot(g.x - this.x, g.y - this.y);
+      const theirs = Math.hypot(g.x - world.player.x, g.y - world.player.y);
+      // only steal a gate once: hovering over the same buoy the player never
+      // leaves is the old orbit bug wearing a different hat
+      if (key !== this.contestKey && mine < 8 && mine < theirs - 0.7) {
+        this.contestKey = key;
+        this.contestT = 4.5 + Math.random() * 2.5;
+        this.gatePos = { x: g.x, y: g.y };
+        const idx = world.map?.gates?.findIndex((q) => q.x === g.x && q.y === g.y);
+        if (idx >= 0) this.gateIdx = idx;
+        this.aiPathT = 0;
+        this.aiKey = '';
+        target = this.gatePos;
+      }
+    }
 
     // Relic heats make everyone a collector. Outside them, only the collector
     // personalities take the scenic detour.

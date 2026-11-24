@@ -805,7 +805,7 @@ export const CREDITS = [
   'SURFN 2000 — criado por FloatingSkies (Arikcnovais / azzynovais). Mesma pessoa, três nicks.',
   'Código, arte, level design, texto e direção: FloatingSkies.',
   '10 capítulos de carreira, 5 capítulos da Lenda e pós-game: 7 ilhas, provas, festas, mods e conquistas.',
-  'Zel recortado de spritesheets/Zel Spritesheet.png (16 poses, 4 direções).',
+  'Zel recortado de spritesheets/zel v2 spritesheet.png (16 poses, 4 direções, shorts de praia).',
   'Tiles, ondas, props, retratos e papéis de parede gerados em Python na paleta do atlas original.',
   'Motor Paperwing do projeto skyblock: câmera, partículas, painéis e áudio com fallback sintetizado.',
   'Waterflame — Glorious Morning 1/2, Jumper, Ricochet Love, Chaotic, Electroman Adventures, Space Pirates, Techock, The Show, Swampland (CC BY-NC-SA 3.0).',

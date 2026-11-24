@@ -4,6 +4,7 @@
    skyblock panel art and Courier pixel-ish type.
    ========================================================================= */
 import { VIEW, clamp, drawText, isoX, isoY, textSize, UI_FONT } from '../engine/core.js';
+import { t } from '../engine/i18n.js';
 import { CAST, RELICS, RELIC_ORDER, RANKS, CHAPTERS, POSTGAME_HEATS, NEWS,
   CREDITS, TICKER_TIPS, LEGEND_CHAPTERS, HANGOUTS, ISLANDS, WORLD_QUESTS,
   HOLIDAYS, TAPES, ACHIEVEMENTS, EVENTS, BONUS_STAGES } from './story.js';
@@ -29,7 +30,7 @@ function comboWord(n) {
 /* Truncate to fit a card instead of letting the text run under icons and
    across the panel border. Uses the same font drawText() will use. */
 export function fit(ctx, text, maxW, size = 8) {
-  const s = String(text ?? '');
+  const s = t(String(text ?? ''));
   ctx.font = FONT(size);
   if (ctx.measureText(s).width <= maxW) return s;
   let cut = s;
@@ -40,7 +41,7 @@ export function fit(ctx, text, maxW, size = 8) {
 export function wrap(ctx, text, maxW, size = 8) {
   ctx.font = FONT(size);
   const out = [];
-  for (const para of String(text).split('\n')) {
+  for (const para of t(String(text)).split('\n')) {
     const words = para.split(' ');
     let line = '';
     for (const w of words) {
@@ -130,9 +131,14 @@ export class UI {
   say(pages, onDone, onChoice) {
     if (typeof pages === 'string') pages = [{ text: pages }];
     this.dialog = {
+      // translate here: the typing animation slices the string by character,
+      // so the lookup has to happen while the line is still whole
       pages: pages.map((p) => ({
-        who: p.who || 'zel', text: p.text,
-        choices: p.choices || null, picked: false,
+        who: p.who || 'zel', text: t(p.text),
+        choices: p.choices
+          ? p.choices.map((c) => ({ ...c, label: t(c.label), reply: t(c.reply) }))
+          : null,
+        picked: false,
       })),
       i: 0, chars: 0, onDone: onDone || null, onChoice: onChoice || null, t: 0,
     };
@@ -160,7 +166,7 @@ export class UI {
     const ch = page.choices?.[i];
     if (!ch || page.picked) return;
     page.picked = true;
-    page.text = ch.reply || ch.label;
+    page.text = t(ch.reply || ch.label);
     page.chars = 0;
     d.onChoice?.(ch);
   }
@@ -1435,7 +1441,7 @@ export class UI {
     const tabs = ['RELÍQUIAS', 'ELENCO', 'CRÉDITOS', 'FESTAS', 'CONQUISTAS', 'BÔNUS'];
     const tabW = 96;
     const tabsX = Math.round((VIEW.W - tabs.length * tabW) / 2);
-    tabs.forEach((t, i) => {
+    tabs.forEach((tab, i) => {
       const x = tabsX + i * tabW;
       this.rect('gallery:tab:' + i, x, 44, tabW - 4, 18);
       this.panel(ctx, x, 44, tabW - 4, 18, i === game.galleryTab ? 1 : 0.5);
@@ -1443,7 +1449,7 @@ export class UI {
         ctx.strokeStyle = C.gold;
         ctx.strokeRect(x + 4.5, 48.5, tabW - 13, 9);
       }
-      drawText(ctx, `${i + 1} ${t}`, x + (tabW - 4) / 2, 49, {
+      drawText(ctx, `${i + 1} ${t(tab)}`, x + (tabW - 4) / 2, 49, {
         size: 4, color: i === game.galleryTab ? C.gold : C.dim, align: 'center',
       });
     });
@@ -1666,13 +1672,15 @@ export class UI {
       ['Música', `${Math.round(game.musicVol * 100)}%`, 'music'],
       ['Efeitos', `${Math.round(game.sfxVol * 100)}%`, 'sfx'],
       ['Qualidade', game.qualityLabel(), 'quality'],
+      ['Idioma', game.languageLabel(), 'lang'],
       ['Tremor de tela', s.shake ? 'LIGADO' : 'DESLIGADO', 'shake'],
       ['Scanlines CRT', s.scanlines ? 'LIGADO' : 'DESLIGADO', 'scan'],
       ['Minimapa', s.minimap === false ? 'DESLIGADO' : 'LIGADO', 'map'],
       ['Textos de zoeira', s.banter === false ? 'DESLIGADO' : 'LIGADO', 'banter'],
     ];
     rows.forEach(([k, v, id], i) => {
-      const y = 62 + i * 34;
+      // eight rows now, so they sit a touch tighter to clear the buttons
+      const y = 58 + i * 31;
       const sel = i === game.optIndex;
       this.rect('opt:' + id, ox, y, 400, 26);
       this.panel(ctx, ox, y, 400, 26, sel ? 1 : 0.6);

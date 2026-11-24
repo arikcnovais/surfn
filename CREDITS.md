@@ -32,7 +32,7 @@ O que está no jogo, para os créditos baterem com o que existe:
 - 5 capítulos da Lenda contra o Zel, com dificuldade própria e trilha BLACK ROSE.
 - Pós-game livre: vila com NPCs e horários, festas, conquistas, fitas, bônus,
   RELÍQUIAS, modo REMIX e o arquivo escondido do modem dourado.
-- Zel vem de `spritesheets/Zel Spritesheet.png`, recortado por
+- Zel vem de `spritesheets/zel v2 spritesheet.png` (o redesenho com shorts de praia), recortado por
   `tools/slice_zel.py` em 16 poses e 4 direções; tiles, ondas, props, retratos,
   ícones e papéis de parede saem dos geradores em `tools/`.
 - O favicon (`assets/favicon.png`) é um recorte da cabeça do Zel feito por

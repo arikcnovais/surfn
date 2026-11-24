@@ -3,7 +3,14 @@
    A tiny component engine for 2.5D billboard sprites on an isometric island.
    ========================================================================= */
 
+import { t } from './i18n.js';
+
 export const VIEW = { W: 640, H: 360 };
+
+/* Pixel-art grid: the 640x360 stage is drawn into a buffer around this size
+   and blown back up with nearest-neighbour in present(), so sprites, tiles,
+   panels and type all land on the same chunky pixels. */
+export const PIXEL_SCALE = 0.75;
 
 /* One UI typeface for the whole game. Comic Relief (an open Comic Sans) is
    shipped in assets/fonts and inlined into the single-file build, so the look
@@ -37,13 +44,21 @@ export class Screen {
     this.buffer.height = VIEW.H;
     this.ctx2 = this.buffer.getContext('2d');
     this.ctx2.imageSmoothingEnabled = false;
+    // The HUD and menus live on their own full-resolution layer: the island
+    // keeps the chunky pixel grid, but type is drawn at native screen pixels
+    // so it stays crisp instead of being blown up with the world buffer.
+    this.uiCanvas = document.createElement('canvas');
+    this.uiCtx = this.uiCanvas.getContext('2d', { alpha: true });
+    this.uiBlocks = 1;
     this.scale = 1; this.ox = 0; this.oy = 0; this.dpr = 1;
     // Quality caps: potato phones render the 640x360 frame 1:1, strong
     // machines supersample up to 4x. game.applyPerf() sets these.
     this.dprCap = 2;
-    this.maxScale = 4;
     this.resize();
     window.addEventListener('resize', () => this.resize());
+    // mobile browsers resize the visual viewport when the address bar shows
+    // or hides, and that does not always fire a window resize
+    window.visualViewport?.addEventListener('resize', () => this.resize());
   }
   resize() {
     const w = Math.max(320, window.innerWidth);
@@ -54,6 +69,8 @@ export class Screen {
     this.canvas.height = Math.floor(h * this.dpr);
     this.canvas.style.width = w + 'px';
     this.canvas.style.height = h + 'px';
+    this.uiCanvas.width = this.canvas.width;
+    this.uiCanvas.height = this.canvas.height;
     // The world view follows the browser aspect ratio. The UI keeps a 360px
     // tall safe frame; on ultrawide screens (21:9, 21:6) it widens up to 960
     // logical pixels so menus use the extra space instead of floating in a
@@ -70,17 +87,26 @@ export class Screen {
     this.uiH = 360;
     this.uiX = Math.round((VIEW.W - this.uiW) / 2);
     this.uiY = Math.round((VIEW.H - this.uiH) / 2);
+    // 1/16 steps fill small phones and odd laptop sizes much better than the
+    // old 1/8 ladder, which left big letterbox bars on 1366-wide screens.
     const s = Math.min(w / VIEW.W, h / VIEW.H);
-    this.scale = Math.max(0.25, Math.floor(s * 8) / 8);
+    this.scale = Math.max(0.25, Math.floor(s * 16) / 16);
     this.ox = Math.round((w - VIEW.W * this.scale) / 2);
     this.oy = Math.round((h - VIEW.H * this.scale) / 2);
-    // Supersample the 640x360 stage in the backing buffer so a 1080p/1440p
-    // browser is drawn at its native pixel count instead of upscaling a 640px
-    // bitmap. The game still uses the same 640x360 coordinate system.
-    this.renderScale = Math.max(1, Math.min(this.maxScale, Math.ceil(this.scale * this.dpr)));
-    this.buffer.width = VIEW.W * this.renderScale;
-    this.buffer.height = VIEW.H * this.renderScale;
+    // Pixel-art grid: render the stage below its logical size, then stretch
+    // the buffer back by an exact whole-number factor in present(). Without
+    // that integer step a 0.75 buffer lands on screen as uneven 2px/3px
+    // stripes, which turns the tiles' dither into fizzing noise.
+    const grid = this.scale * this.dpr;
+    this.pixelBlocks = Math.max(1, Math.round(grid / PIXEL_SCALE));
+    this.renderScale = grid / this.pixelBlocks;
+    this.buffer.width = Math.max(1, Math.round(VIEW.W * this.renderScale));
+    this.buffer.height = Math.max(1, Math.round(VIEW.H * this.renderScale));
     this.ctx.imageSmoothingEnabled = false;
+    // The UI layer uses the exact stage scale: canvas type is vector, so it
+    // stays sharp at fractional scales, and the layer never outgrows the
+    // letterbox (rounding up used to clip the right/bottom of every menu).
+    this.uiBlocks = Math.max(0.5, this.scale * this.dpr);
   }
   begin() {
     const c = this.ctx2;
@@ -89,6 +115,19 @@ export class Screen {
     c.imageSmoothingEnabled = false;
     return c;
   }
+  /* Full-resolution layer for the HUD and menus. Logical coordinates match
+     the world stage (same origin, same safe frame), but the transform uses
+     whole device pixels so text renders sharply. */
+  beginUI() {
+    const c = this.uiCtx;
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.clearRect(0, 0, this.uiCanvas.width, this.uiCanvas.height);
+    c.imageSmoothingEnabled = false;
+    const k = this.uiBlocks || this.scale * this.dpr || 1;
+    c.setTransform(k, 0, 0, k, Math.round(this.ox * this.dpr), Math.round(this.oy * this.dpr));
+    return c;
+  }
+
   present() {
     // catch panel/window changes that do not fire a resize event
     if (window.innerWidth !== this.w || window.innerHeight !== this.h) this.resize();
@@ -97,12 +136,15 @@ export class Screen {
     c.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     // Leave the letterbox transparent: the page's sky gradient shows through.
     c.clearRect(0, 0, w, h);
-    // Minifying the supersampled buffer with nearest-neighbour is what made
-    // text look jagged. Smooth it only when we are actually shrinking the
-    // buffer (native or upscaled pixels stay crisp).
-    const destW = VIEW.W * this.scale * this.dpr;
-    c.imageSmoothingEnabled = this.buffer.width > destW * 1.04;
-    c.drawImage(this.buffer, this.ox, this.oy, VIEW.W * this.scale, VIEW.H * this.scale);
+    // The buffer is deliberately smaller than the screen: stretch it by its
+    // exact block count with nearest-neighbour so every art pixel becomes the
+    // same square on screen.
+    const b = this.pixelBlocks || 1;
+    c.imageSmoothingEnabled = false;
+    c.drawImage(this.buffer, this.ox, this.oy,
+      (this.buffer.width * b) / this.dpr, (this.buffer.height * b) / this.dpr);
+    // the crisp layer rides on top at native resolution
+    c.drawImage(this.uiCanvas, 0, 0, w, h);
   }
   toInternal(clientX, clientY) {
     const r = this.canvas.getBoundingClientRect();
@@ -415,6 +457,8 @@ export { AudioEngine } from './audio.js';
 /* ---------------------------------------------------------------- drawing */
 export function drawText(ctx, str, x, y, opts = {}) {
   const { size = 8, color = '#fbeec8', align = 'left', weight = 'normal' } = opts;
+  // one place localises every label the game draws
+  const text = t(str);
   // Small type sits on the striped panel art, so it always gets a 1px ink
   // drop shadow unless the caller asks for something else.
   // A 1px shadow is opt-in: at these sizes a translucent copy just reads as
@@ -425,10 +469,10 @@ export function drawText(ctx, str, x, y, opts = {}) {
   ctx.textBaseline = 'top';
   if (shadow) {
     ctx.fillStyle = shadow;
-    ctx.fillText(str, Math.round(x) + 1, Math.round(y) + 1);
+    ctx.fillText(text, Math.round(x) + 1, Math.round(y) + 1);
   }
   ctx.fillStyle = color;
-  ctx.fillText(str, Math.round(x), Math.round(y));
+  ctx.fillText(text, Math.round(x), Math.round(y));
 }
 
 /** 9-slice a 24x24 panel frame for a w x h box */

@@ -26,9 +26,11 @@ RADIUS = 52
 RING = (98, 214, 232)
 
 # Head box inside the down-facing frame (frame 4): ears at the top, collar at
-# the bottom, the tail on the left and the arms are left out.
-HEAD_BOX = (46, 0, 146, 100)
-HEAD_SCALE = 2            # 100 -> 200, nearest neighbour, keeps the pixels hard
+# the bottom, the tail on the left and the arms are left out. These pixels are
+# the v2 sheet's cell (292x307, anchor 142/291); the old 248x288 cell framed
+# the head about 46px further left.
+HEAD_BOX = (104, 28, 212, 140)
+HEAD_SCALE = 2            # 108x112 -> 216x224, nearest, keeps the pixels hard
 
 
 def lerp(a, b, t):
@@ -62,9 +64,10 @@ def head():
     x0, y0, x1, y1 = HEAD_BOX
     h = frame.crop((x0, y0, x1, y1))
     # Zel's tail floats behind the head on the left edge; a head crop doesn't
-    # want a stray flame, so clear those columns before scaling.
+    # want a stray flame, so clear those columns before scaling (below the
+    # ears only, the ear tuft itself reaches the edge).
     clear = ImageDraw.Draw(h)
-    clear.rectangle((-1, 14, 15, h.height + 1), fill=(0, 0, 0, 0))
+    clear.rectangle((-1, 30, 24, h.height + 1), fill=(0, 0, 0, 0))
     return h.resize((h.width * HEAD_SCALE, h.height * HEAD_SCALE), Image.NEAREST)
 
 

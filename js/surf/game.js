@@ -21,6 +21,11 @@ import {
 } from './story.js';
 import { MAPS, MAP_ORDER, MAP_META, THEMES, getMap } from './maps.js';
 import { Mods } from './mods.js';
+import { DIALOGUE } from './dialogues.js';
+import { TEXT } from './locale_text.js';
+import {
+  setLocale, cycleLocale, languageLabel as localeLabel, registerLexicon,
+} from '../engine/i18n.js';
 import { Minigames, MINIGAMES } from './minigames.js';
 
 const SAVE_KEY = 'surfn-2000-save-v1';
@@ -28,6 +33,7 @@ const SAVE_KEY = 'surfn-2000-save-v1';
 const DEFAULT_SETTINGS = {
   musicVol: 0.4, sfxVol: 0.5, muted: false, shake: true,
   scanlines: true, minimap: true, banter: true, quality: 'auto', rev: 2,
+  locale: 'auto',
 };
 
 const TAUNTS = [
@@ -137,15 +143,15 @@ export class Game {
     return names[this.settings.quality] || 'AUTO';
   }
 
+  languageLabel() { return localeLabel(); }
+
   applyPerf(mode = this.settings.quality, silent = false) {
     const fixed = { low: 0, med: 1, high: 2 };
     const level = fixed[mode] !== undefined ? fixed[mode] : (this.autoLevel ?? 2);
     this.perfLevel = level;
-    // renderScale decides how many pixels the 640x360 frame is drawn with:
-    // level 0 renders 1:1 and lets the GPU stretch it, which is what keeps
-    // decade-old phones and netbooks smooth.
+    // The pixel-art grid is fixed now, so quality only trims the display
+    // backing store plus particles and sea density on weak machines.
     this.screen.dprCap = level === 0 ? 1 : level === 1 ? 1.5 : 2;
-    this.screen.maxScale = level === 0 ? 1 : level === 1 ? 2 : 4;
     this.particles.cap = level === 0 ? 120 : level === 1 ? 280 : 520;
     this.sea.setDensity(level === 0 ? 0.25 : level === 1 ? 0.6 : 1);
     this.screen.resize();
@@ -257,7 +263,7 @@ export class Game {
       musicVol: this.musicVol, sfxVol: this.sfxVol, muted: this.muted, rev: 2,
       shake: this.settings.shake, scanlines: this.settings.scanlines,
       minimap: this.settings.minimap, banter: this.settings.banter,
-      quality: this.settings.quality,
+      quality: this.settings.quality, locale: this.settings.locale || 'auto',
     };
     if (this.run?.def?.flow === 'sandbox' && this.run.needs) {
       const w = this.save.world;
@@ -296,6 +302,9 @@ export class Game {
   /* -------------------------------------------------------------- lifecycle */
   async boot() {
     this.loadSave();
+    registerLexicon(DIALOGUE);
+    registerLexicon(TEXT);
+    setLocale(this.settings.locale || 'auto');
     this.mods = new Mods(this);
     this.mods.load();
     this.musicVol = this.settings.musicVol;
@@ -1060,16 +1069,21 @@ export class Game {
     d.gateT += dt;
     d.gatePos.bob = Math.sin(d.gateT * 3);
     for (const r of [d.player, ...d.rivals]) {
-      const dir = r.think(dt, d.map, d.gatePos, d);
+      const gate = r.isPlayer ? d.gatePos : r.raceTarget(d);
+      const dir = r.think(dt, d.map, gate, d);
       r.update(dt, { map: d.map, sea: this.sea, input: dir, canControl: true });
       r.gateCd = Math.max(0, (r.gateCd || 0) - dt);
-      const gdx = r.x - d.gatePos.x, gdy = r.y - d.gatePos.y;
+      const gdx = r.x - gate.x, gdy = r.y - gate.y;
       if (gdx * gdx + gdy * gdy < 1.21 && r.gateCd <= 0) {
-        r.gates++;
-        r.gateCd = 2.4;
-        r.comboUp();
-        r.addScore(110 + r.ai * 18);
-        this.advanceMenuGate(d);
+        if (r.isPlayer) {
+          r.gates++;
+          r.gateCd = 2.4;
+          r.comboUp();
+          r.addScore(110 + r.ai * 18);
+          this.advanceMenuGate(d);
+        } else {
+          r.bankGate(d, gate);
+        }
       }
       for (const rel of d.relics) {
         if (rel.taken) {
@@ -1352,7 +1366,7 @@ export class Game {
 
   updateOptions() {
     const i = this.input;
-    const n = 7;
+    const n = 8;
     if (i.hit('ArrowUp', 'KeyW')) { this.optIndex = (this.optIndex + n - 1) % n; this.audio.sfx('select'); }
     if (i.hit('ArrowDown', 'KeyS')) { this.optIndex = (this.optIndex + 1) % n; this.audio.sfx('select'); }
     if (i.hit('ArrowLeft', 'KeyA')) this.adjustOption(this.optIndex, -1);
@@ -1366,7 +1380,7 @@ export class Game {
         const key = id.slice(4);
         if (key === 'back') { this.activate('opt:back'); return; }
         if (key === 'reset') { this.activate('opt:reset'); return; }
-        const idx = ['music', 'sfx', 'quality', 'shake', 'scan', 'map', 'banter'].indexOf(key);
+        const idx = ['music', 'sfx', 'quality', 'lang', 'shake', 'scan', 'map', 'banter'].indexOf(key);
         if (idx >= 0) { this.optIndex = idx; this.adjustOption(idx, 1); }
       }
     }
@@ -1394,10 +1408,16 @@ export class Game {
         this.audio.sfx('ui');
         break;
       }
-      case 3: s.shake = dir > 0 ? !s.shake : s.shake; this.audio.sfx('ui'); break;
-      case 4: s.scanlines = !s.scanlines; this.audio.sfx('ui'); break;
-      case 5: s.minimap = s.minimap === false; this.audio.sfx('ui'); break;
-      case 6: s.banter = s.banter === false; this.audio.sfx('ui'); break;
+      case 3:
+        s.locale = cycleLocale(dir >= 0 ? 1 : -1);
+        setLocale(s.locale);
+        this.ui.toast(`${this.languageLabel()}`, '#8fd3e8');
+        this.audio.sfx('ui');
+        break;
+      case 4: s.shake = dir > 0 ? !s.shake : s.shake; this.audio.sfx('ui'); break;
+      case 5: s.scanlines = !s.scanlines; this.audio.sfx('ui'); break;
+      case 6: s.minimap = s.minimap === false; this.audio.sfx('ui'); break;
+      case 7: s.banter = s.banter === false; this.audio.sfx('ui'); break;
       default: break;
     }
     this.persist();
@@ -2835,12 +2855,14 @@ export class Game {
       // rubber-band: rivals behind push a little harder, leaders ease off —
       // except the legend, who never eases off and pushes hardest when behind
       const gap = run.player.score - r.score;
+      // A rival in front keeps the pedal down: only a light band, so a bot
+      // that earned a lead can actually hold it instead of waiting for you.
       const band = r.legend
         ? 1 + Math.max(0, Math.min(gap, 5000)) / 5000 * 0.08
-        : clamp(1 + gap / 9000, 0.90, 1.22);
+        : clamp(1 + gap / 12000, 0.94, 1.16);
       r.speedMul = (0.84 + r.ai * 0.045) * band;
       let target = sandbox ? this.npcRoutineTarget(r)
-        : r.ai >= 1 ? run.gatePos : null;
+        : r.ai >= 1 ? r.raceTarget(run) : null;
       if (run.flags) {
         const flag = r.team === 'player' ? run.flags.rival : run.flags.player;
         const home = r.team === 'player' ? run.flags.player : run.flags.rival;
@@ -2871,12 +2893,16 @@ export class Game {
       });
       if (r.justLaunched) r.justLaunched = false;
       r.gateCd = Math.max(0, (r.gateCd || 0) - dt);
-      const gdx = r.x - run.gatePos.x, gdy = r.y - run.gatePos.y;
+      const gate = r.gatePos || run.gatePos;
+      const gdx = r.x - gate.x, gdy = r.y - gate.y;
       if (gdx * gdx + gdy * gdy < 1.21 && r.gateCd <= 0) {
-        r.gates++;
-        r.gateCd = r.legend ? 1.8 : 2.4;
-        r.comboUp();
-        r.addScore(90 + r.ai * 15);
+        // rivals bank their own gates, so a fast bot can pull ahead on gates
+        // while the player is still lining up the same buoy
+        const pts = r.bankGate(run, gate);
+        if (gate.x === run.gatePos.x && gate.y === run.gatePos.y) {
+          this.ui.toast(`${r.name} passou o gate que era seu. +${pts} pra ele.`, '#ff9f9f', 2.4);
+          this.audio.sfx('gate');
+        }
       }
       r.turbo = clamp(r.turbo + dt * (r.legend ? 7 : 4), 0, 100);
     }
@@ -2884,6 +2910,18 @@ export class Game {
       run.teamScore = Math.round(run.player.score + run.rivals
         .filter((r) => r.team === 'player')
         .reduce((sum, r) => sum + r.score, 0));
+    }
+
+    // Someone taking the lead is the point of a race: call it out so the
+    // scoreboard is not the only place a rival can win.
+    run.leadCallT = Math.max(0, (run.leadCallT || 0) - dt);
+    if (run.leadCallT <= 0 && !sandbox &&
+      (run.def.goal.type === 'place' || ['heat', 'league', 'legend'].includes(run.def.flow))) {
+      const top = run.board()[0];
+      if (top && !top.isPlayer && top.score > player.score + 1) {
+        run.leadCallT = 20;
+        this.ui.toast(`${top.name} assumiu a ponta: ${Math.round(top.score)} × ${Math.round(player.score)}.`, RIVAL_TINT[top.variant] || '#ffe066', 3);
+      }
     }
 
     // In relic heats the rivals actually race for the pickups, not just gates.
@@ -3701,20 +3739,34 @@ export class Game {
 
   /* ----------------------------------------------------------------- render */
   render() {
-    const ctx = this.screen.begin();
+    const wctx = this.screen.begin();
     this.ui.begin();
-    if (this.demoScreen()) {
-      // the potato tier keeps no live island behind the menus, so the static
-      // cinematic stands in — otherwise those screens would sit on black
-      if (!this.renderMenuRun(ctx) && this.screenName !== 'main') {
-        this.sea.drawCinematic(ctx, this.titleTheme, this.sea.t);
-      }
-    } else if (this.cinematicScreen()) {
-      // menus that never show the race get the painted ocean instead of a
-      // simulated island nobody can see through the shade
-      this.sea.drawCinematic(ctx, this.titleTheme, this.sea.t);
+    const live = ['play', 'paused', 'results', 'wallpaper'].includes(this.screenName);
+    if (this.screenName === 'minigames') {
+      // the arcade is pure pixel art: keep it on the chunky world layer
+      this.minigames.draw(wctx);
+      this.ui.drawCRT(wctx, this, false);
+      this.screen.present();
+      return;
     }
-    const vignette = !['play', 'paused', 'results', 'main', 'wallpaper'].includes(this.screenName);
+    if (!live) {
+      if (this.demoScreen()) {
+        // the potato tier keeps no live island behind the menus, so the static
+        // cinematic stands in — otherwise those screens would sit on black
+        if (!this.renderMenuRun(wctx) && this.screenName !== 'main') {
+          this.sea.drawCinematic(wctx, this.titleTheme, this.sea.t);
+        }
+      } else if (this.cinematicScreen()) {
+        // menus that never show the race get the painted ocean instead of a
+        // simulated island nobody can see through the shade
+        this.sea.drawCinematic(wctx, this.titleTheme, this.sea.t);
+      }
+    }
+    if (live) this.renderWorld(wctx, this.screenName !== 'play');
+
+    // Everything from here on is type and panels: draw it on the sharp layer.
+    const ctx = this.screen.beginUI();
+    const vignette = !live && this.screenName !== 'main';
     if (vignette) this.uiBegin(ctx);
     switch (this.screenName) {
       case 'boot':
@@ -3722,59 +3774,53 @@ export class Game {
         break;
       case 'title':
         this.ui.drawTitle(ctx, this);
-        this.ui.drawCRT(ctx, this, false);
+        this.ui.drawCRT(wctx, this, false);
         break;
       case 'main':
         // world fills the whole stage; the menu sits in the 640x360 safe frame
         this.uiBegin(ctx);
         this.ui.drawMain(ctx, this);
         this.uiEnd(ctx);
-        this.ui.drawCRT(ctx, this, false);
+        this.ui.drawCRT(wctx, this, false);
         break;
       case 'career':
         this.ui.drawCareer(ctx, this);
-        this.ui.drawCRT(ctx, this, false);
+        this.ui.drawCRT(wctx, this, false);
         break;
       case 'maps':
         this.ui.drawMaps(ctx, this);
-        this.ui.drawCRT(ctx, this, false);
+        this.ui.drawCRT(wctx, this, false);
         break;
       case 'world':
         this.ui.drawWorld(ctx, this);
-        this.ui.drawCRT(ctx, this, false);
+        this.ui.drawCRT(wctx, this, false);
         break;
       case 'post':
         this.ui.drawPostgame(ctx, this);
-        this.ui.drawCRT(ctx, this, false);
+        this.ui.drawCRT(wctx, this, false);
         break;
       case 'gallery':
         this.ui.drawGallery(ctx, this);
-        this.ui.drawCRT(ctx, this, false);
+        this.ui.drawCRT(wctx, this, false);
         break;
       case 'tape':
         this.ui.drawTape(ctx, this);
-        this.ui.drawCRT(ctx, this, false);
-        break;
-      case 'minigames':
-        this.minigames.draw(ctx);
-        this.ui.drawCRT(ctx, this, false);
+        this.ui.drawCRT(wctx, this, false);
         break;
       case 'remix':
         this.ui.drawRemix(ctx, this);
-        this.ui.drawCRT(ctx, this, false);
+        this.ui.drawCRT(wctx, this, false);
         break;
       case 'options':
         this.ui.drawOptions(ctx, this);
-        this.ui.drawCRT(ctx, this, false);
+        this.ui.drawCRT(wctx, this, false);
         break;
-      case 'play': this.renderWorld(ctx); break;
-      case 'wallpaper': this.renderWorld(ctx, true); break;
+      case 'play': this.renderWorldUI(ctx, false); break;
+      case 'wallpaper': break;
       case 'paused':
-        this.renderWorld(ctx, true);
         this.uiBegin(ctx); this.ui.drawPause(ctx, this); this.uiEnd(ctx);
         break;
       case 'results':
-        this.renderWorld(ctx, true);
         this.uiBegin(ctx); this.ui.drawResults(ctx, this); this.uiEnd(ctx);
         break;
       default:
@@ -3812,20 +3858,25 @@ export class Game {
     this.sea.drawWeather(ctx, theme);
     this.drawAtmosphere(ctx, run);
     if (!frozen && run.phase !== 'epilogue') this.drawSpeedFX(ctx, run.player);
-    if (!frozen) {
-      this.sea.drawRogue(ctx);
-      this.uiBegin(ctx);
-      if (run.phase === 'cutscene') this.ui.drawCutscene(ctx, this);
-      else if (run.phase !== 'epilogue') this.ui.drawHUD(ctx, this);
-      if (run.phase === 'countdown') this.ui.drawCountdown(ctx, this);
-      if ((run.phase === 'race' || run.phase === 'countdown') && run.def.flow !== 'sandbox') {
-        this.drawEdgeArrows(ctx, run);
-      }
-      this.ui.drawBanner(ctx);
-      if (this.ui.active) this.ui.drawDialog(ctx, this);
-      this.uiEnd(ctx);
-    }
+    if (!frozen) this.sea.drawRogue(ctx);
     this.ui.drawCRT(ctx, this, !frozen);
+  }
+
+  // HUD, countdown, banners and dialogue go on the crisp layer, after the
+  // world has been flattened into the pixel buffer.
+  renderWorldUI(ctx, frozen) {
+    const run = this.run;
+    if (!run || frozen) return;
+    this.uiBegin(ctx);
+    if (run.phase === 'cutscene') this.ui.drawCutscene(ctx, this);
+    else if (run.phase !== 'epilogue') this.ui.drawHUD(ctx, this);
+    if (run.phase === 'countdown') this.ui.drawCountdown(ctx, this);
+    if ((run.phase === 'race' || run.phase === 'countdown') && run.def.flow !== 'sandbox') {
+      this.drawEdgeArrows(ctx, run);
+    }
+    this.ui.drawBanner(ctx);
+    if (this.ui.active) this.ui.drawDialog(ctx, this);
+    this.uiEnd(ctx);
   }
 
   visibleTileRange(map, cam, padPx = 96) {

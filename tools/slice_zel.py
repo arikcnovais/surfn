@@ -1,6 +1,7 @@
 """Slice the Zel surfing spritesheet into one clean, seamless frame atlas.
 
-The art in spritesheets/Zel Spritesheet.png is packed tighter than a 4x4 grid:
+The art in spritesheets/zel v2 spritesheet.png (the beach-shorts redraw; the
+v1 sheet stays on disk for reference) is packed tighter than a 4x4 grid:
 boards and spray cross the 224x300 cell seams. Cube-cropping by cell therefore
 cuts board tips off and drags pieces of the neighbouring pose into a frame,
 which is what made the old atlas flicker.
@@ -31,7 +32,7 @@ from collections import deque
 
 from PIL import Image, ImageDraw, ImageFilter
 
-SRC = "spritesheets/Zel Spritesheet.png"
+SRC = "spritesheets/zel v2 spritesheet.png"
 OUT_ATLAS = "assets/zel_atlas.png"
 OUT_JSON = "assets/zel.json"
 
@@ -40,7 +41,6 @@ CELL_W, CELL_H = 224, 300
 ALPHA_MIN = 24
 SOLID = 200
 PAD = 16
-OUTLINE = (8, 14, 28, 210)
 
 
 def load_pixels(im):
@@ -266,18 +266,9 @@ def build():
         cleaned = keep_largest_island(cell)
         atlas.paste(cleaned, (fr["x"], fr["y"]))
 
-    # a dark contour keeps the rider readable over busy water and deck tiles;
-    # it is baked at source resolution so it survives the in-game downscale
-    grown = atlas.getchannel("A").filter(ImageFilter.MaxFilter(9))
-    outline = Image.new("RGBA", atlas.size, OUTLINE)
-    outline.putalpha(grown)
-    framed = Image.new("RGBA", atlas.size, (0, 0, 0, 0))
-    framed.alpha_composite(outline)
-    framed.alpha_composite(atlas)
-    atlas = framed
-    for fr in decoded:
-        cell = atlas.crop((fr["x"], fr["y"], fr["x"] + fr["w"], fr["y"] + fr["h"]))
-        atlas.paste(keep_largest_island(cell), (fr["x"], fr["y"]))
+    # The v2 art already draws its own thin outline around every pose. No
+    # contour is dilated on top of it: that doubled the edge into a fat sticker
+    # ring, so the atlas is saved exactly as the sheet was drawn.
     atlas.save(OUT_ATLAS)
 
     def anim(row):
